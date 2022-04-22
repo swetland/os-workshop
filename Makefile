@@ -7,8 +7,9 @@ all:: build-all
 
 V := @
 
-XTOOLCHAIN ?= /toolchain/riscv32-11.2.0/bin/riscv32-elf-
-QEMU ?= /work/app/qemu/bin/qemu-system-riscv32
+# defaults for Ubuntu, can override with local.mk
+XTOOLCHAIN ?= /usr/bin/riscv64-unknown-elf-
+QEMU ?= /usr/bin/qemu-system-riscv32
 
 QFLAGS := -machine virt -bios none -nographic
 QFLAGS.GDB := $(QFLAGS) -gdb tcp::7777 -S
