@@ -42,6 +42,13 @@ make install
 
 You can change `--prefix=` to point at where you want to install qemu or remove it to install in /usr/local (which will require running make install as root)
 
+## Alternate Toolchain Build
+
+I haven't tried this, but it's the official-ish RISCV toolchain build system and looks like it should build gcc, gdb, and qemu:
+https://github.com/riscv-collab/riscv-gnu-toolchain
+
+Be sure to configure it for 32bit riscv.
+
 ## Checking out and building
 
 ```
