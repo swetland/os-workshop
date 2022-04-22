@@ -2,10 +2,11 @@
 
 You will need a cross compiler (riscv32-elf-gcc), debugger (riscv-elf-gdb), and emulator (qemu-system-riscv32).
 
-If you already have these available and installed, simply edit `local.mk` to reflect how to invoke them:
+If you already have these available and installed, simply edit `local.mk` at the root of this
+project to reflect how to invoke them:
 ```
-XTOOLCHAIN := riscv32-elf-
-QEMU := qemu-system-riscv32
+XTOOLCHAIN := /path/to/bin/riscv32-elf-
+QEMU := /path/to/bin/qemu-system-riscv32
 ```
 
 Note that the toolchain path is a prefix, omitting `gcc` because the makefile will stick `gdb`, `objdump`, `ld`, etc on the end as needed.
@@ -15,7 +16,16 @@ This should work on Ubuntu 20.04.4LTS or newer.  Not sure about older versions.
 ```
 sudo apt-get install gcc-riscv64-unknown-elf qemu-system-misc gdb-multiarch
 ```
-That should get you `riscv64-unknown-elf-gcc` and `qemu-system-riscv32` and `gdb-multiarch`
+That should get you `riscv64-unknown-elf-gcc` and `qemu-system-riscv32` and `gdb-multiarch`, and you
+can add the following to your `local.mk`:
+
+``` makefile
+XTOOLCHAIN := /usr/bin/riscv64-unknown-elf-
+QEMU := /usr/bin/qemu-system-riscv32
+```
+
+Note that the toolchain is 64-bit, and the qemu system is 32; the compiler arguments in the main
+Makefile specify that a 32-bit binary should be built.
 
 ## Building GCC and GDB (if needed)
 
@@ -29,7 +39,7 @@ $ cd toolchains
 $ ./doit -f -a riscv32
 ```
 
-On success you'll end up with `riscv32-elf-11.2.0-Linux-x86_64` with `bin/riscv32-elf-*` inside
+On success you'll end up with `riscv32-elf-11.2.0-Linux-x86_64` with `bin/riscv32-elf-*` inside.
 
 I like to keep all my cross compilers in a common place, so I do this:
 ```
@@ -40,7 +50,7 @@ $ mv riscv32-elf-11.2.0-Linux-x86_64/ /toolchain/riscv32-11.2.0
 
 ```
 wget https://download.qemu.org/qemu-7.0.0.tar.xz
-tar axvf qemu-7.0.0.tar.xz 
+tar axvf qemu-7.0.0.tar.xz
 cd qemu-7.0.0
 ./configure --prefix=/work/qemu --target-list=riscv32-softmmu
 make -j32
@@ -97,4 +107,3 @@ Breakpoint 1, main (argc=0, argv=0x0) at misc/mandelbrot.c:7
 7               int top = 1000, bottom = -1000, ystep = 50;
 (gdb)
 ```
-
