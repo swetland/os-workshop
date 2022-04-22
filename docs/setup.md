@@ -15,7 +15,7 @@ This should work on Ubuntu 20.04.4LTS or newer.  Not sure about older versions.
 ```
 sudo apt-get install gcc-riscv64-unknown-elf qemu-system-misc gdb-multiarch
 ```
-That should get you `riscv64-unknown-elf-gcc` and `qemu-system-riscv32` and 'gdb-multiarch'
+That should get you `riscv64-unknown-elf-gcc` and `qemu-system-riscv32` and `gdb-multiarch`
 
 ## Building GCC and GDB (if needed)
 
