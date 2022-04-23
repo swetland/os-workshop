@@ -42,7 +42,12 @@ The core 32bit integer instruction set for RISCV is pretty small:
 | fence | memory ordering | |
 | ecall | service call | trap to higher processor mode |
 | ebreak | hardware breakpoint | return control to debugger |
-
+| csrrw rd, csr, rs1 | csr atomic read/write | rd = csr, csr = rs1 |
+| csrrs rd, csr, rs1 | csr atomic read/set | rd = csr, csr |=  rs1 |
+| csrrc rd, csr, rs1 | csr atomic read/clear | rd = csr, csr &= ~rs1 |
+| csrrwi rd, csr, u5 | csr atomic read/write imm | rd = csr, csr = u5 |
+| csrrsi rd, csr, u5 | csr atomic read/set imm | rd = csr, csr |= u5 |
+| csrrci rd, csr, u5 | csr atomic read/clear imm | rd = csr, csr &= ~u5 |
 
 The assembler and diassembler recognize a number of useful pseudo instructions which put friendly names (and/or shorter forms) on many common use cases.  For example there is a BLT (branch if less than) instruction, but not a BGT instruction, but the assembler treats BGT as an alias for BLT with the arguments swapped.
 
@@ -73,6 +78,13 @@ The assembler and diassembler recognize a number of useful pseudo instructions w
 | blt rs, rt, addr | bge rt, rs, addr | branch if <= | if rs <= rt then pc = addr [2] |
 | bgtu rs, rt, addr | bltu rt, rs, addr | branch if > (unsigned) | if rs > rt then pc = addr [2] |
 | bleu rs, rt, addr | bgeu rt, rs, addr | branch if <= (unsigned) | if rs <= rt then pc = addr [2] |
+| csrr rd, csr | csrrs rd, csr, x0 | read csr | rd = csr |
+| csrw csr, rs | csrrw x0, csr, rs | write csr | csr = rs |
+| csrs csr, rs | csrrs x0, csr, rs | set csr bits | csr |= rs |
+| csrc csr, rs | csrrc x0, csr, rs | clear csr bits | csr &= ~rs |
+| csrwi csr, u5 | csrrwi x0, csr, u5 | write csr imm | csr = u5 |
+| csrsi csr, u5 | csrrsi x0, csr, u5 | set csr bits imm | csr |= u5 |
+| csrci csr, u5 | csrrci x0, csr, u5 | clear csr bits imm | csr &= ~u5 |
 
 [1] addr is encoded as a signed 21bit value, allowing a range of +/- 1MB from the pc
 
@@ -106,4 +118,5 @@ RISCV has 32 integer registers (x0 - x31), but the assembler and disassembler re
 | rs2 | second source register | x0 .. x31 |
 | s12 | 12bit signed immediate | -2048 .. 2047 |
 | u5 | unsigned 5bit immediate | 0 .. 31 |
+| csr | control/status register number | 0 .. 4095 |
 
