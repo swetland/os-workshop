@@ -62,7 +62,7 @@
 #define MSTATUS_MPIE 0x00000080U // Mode M Prev IRQ Enable
 #define MSTATUS_MIE  0x00000008U // Mode M IRQ Enable
 
-#define MSTATUS_MPP_SHFIT 11
+#define MSTATUS_MPP_SHIFT 11
 
 // CSR_STATUS (and CSR_MSTATUS) bits
 #define SSTATUS_SD   0x80000000U // Some Dirty (XS or FS are nonzero)
@@ -84,28 +84,51 @@
 #define PRIV_M 3 // Machine
 
 // Interrupt numbers (xCAUSE) or bits (xIE/xIP/MIDELEG)
-#define INT_SVC_SW       1
-#define INT_MACH_SW      3
-#define INT_SVC_TIMER    5
-#define INT_MACH_TIMER   7
-#define INT_SVC_EXTERN   9 
-#define INT_MACH_EXTERN  11
+#define INTn_SVC_SW       1
+#define INTn_MACH_SW      3
+#define INTn_SVC_TIMER    5
+#define INTn_MACH_TIMER   7
+#define INTn_SVC_EXTERN   9
+#define INTn_MACH_EXTERN  11
+
+#define INTb_SVC_SW       (1U << 1)
+#define INTb_MACH_SW      (1U << 3)
+#define INTb_SVC_TIMER    (1U << 5)
+#define INTb_MACH_TIMER   (1U << 7)
+#define INTb_SVC_EXTERN   (1U << 9)
+#define INTb_MACH_EXTERN  (1U << 11)
+
 
 // Exception numbers (xCAUSE) or bits (MEDELEG)
-#define EXC_INSTR_ADDR_MISALIGN   0
-#define EXC_INSTR_ACCES_FAULT     1
-#define EXC_ILLEGAL_INSTR         2
-#define EXC_BREAKPOINT            3
-#define EXC_LOAD_ADDR_MISALIGN    4
-#define EXC_LOAD_ADDR_FAULT       5
-#define EXC_STORE_ADDR_MISALIGN   6
-#define EXC_STORE_ADDR_FAULT      7
-#define EXC_ECALL_UMODE           8
-#define EXC_ECALL_SMODE           9
-#define EXC_ECALL_MMODE           11
-#define EXC_INSTR_PAGE_FAULT      12
-#define EXC_LOAD_PAGE_FAULT       13
-#define EXC_STORE_PAGE_FAULT      15
+#define EXCn_INSTR_ADDR_MISALIGN   0
+#define EXCn_INSTR_ACCES_FAULT     1
+#define EXCn_ILLEGAL_INSTR         2
+#define EXCn_BREAKPOINT            3
+#define EXCn_LOAD_ADDR_MISALIGN    4
+#define EXCn_LOAD_ADDR_FAULT       5
+#define EXCn_STORE_ADDR_MISALIGN   6
+#define EXCn_STORE_ADDR_FAULT      7
+#define EXCn_ECALL_UMODE           8
+#define EXCn_ECALL_SMODE           9
+#define EXCn_ECALL_MMODE           11
+#define EXCn_INSTR_PAGE_FAULT      12
+#define EXCn_LOAD_PAGE_FAULT       13
+#define EXCn_STORE_PAGE_FAULT      15
+
+#define EXCb_INSTR_ADDR_MISALIGN   (1U << 0)
+#define EXCb_INSTR_ACCES_FAULT     (1U << 1)
+#define EXCb_ILLEGAL_INSTR         (1U << 2)
+#define EXCb_BREAKPOINT            (1U << 3)
+#define EXCb_LOAD_ADDR_MISALIGN    (1U << 4)
+#define EXCb_LOAD_ADDR_FAULT       (1U << 5)
+#define EXCb_STORE_ADDR_MISALIGN   (1U << 6)
+#define EXCb_STORE_ADDR_FAULT      (1U << 7)
+#define EXCb_ECALL_UMODE           (1U << 8)
+#define EXCb_ECALL_SMODE           (1U <<  9)
+#define EXCb_ECALL_MMODE           (1U << 11)
+#define EXCb_INSTR_PAGE_FAULT      (1U << 12)
+#define EXCb_LOAD_PAGE_FAULT       (1U << 13)
+#define EXCb_STORE_PAGE_FAULT      (1U << 15)
 
 // inline assembly helpers for CSR access, etc
 #ifndef __ASSEMBLER__
