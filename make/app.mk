@@ -1,68 +1,73 @@
 ## Copyright 2022, Brian Swetland <swetland@frotz.net>
 ## Licensed under the Apache License, Version 2.0
 
-APPDIR := $(BUILD)/$(APP)
-APPELF := $(BUILD)/$(APP).elf
-APPLST := $(BUILD)/$(APP).lst
+APP_DIR := $(BUILD)/$(APP_NAME)
+APP_ELF := $(BUILD)/$(APP_NAME).elf
+APP_LST := $(BUILD)/$(APP_NAME).lst
+APP_LDSCRIPT := $(if $(APP_LDSCRIPT),$(APP_LDSCRIPT),$(LDSCRIPT))
 
-ALL += $(APPELF) $(APPLST)
+ALL += $(APP_ELF) $(APP_LST)
 
 # Generate objects from sources.
-APPOBJ := $(patsubst %.c,$(APPDIR)/%.o,$(SRC))
-APPOBJ := $(patsubst %.S,$(APPDIR)/%.o,$(APPOBJ))
+APP_OBJ := $(patsubst %.c,$(APP_DIR)/%.o,$(APP_SRC))
+APP_OBJ := $(patsubst %.S,$(APP_DIR)/%.o,$(APP_OBJ))
 
 # Assemble compile and link flags.
-APPCFLAGS := $(ARCHFLAGS) $(CFLAGS) $(patsubst %,-I%,$(APPINC))
-APPLDFLAGS := $(ARCHFLAGS) -Wl,--gc-sections
+APP_CFLAGS := $(ARCHFLAGS) $(CFLAGS) $(patsubst %,-I%,$(APP_INC))
+APP_LDFLAGS := $(ARCHFLAGS) -Wl,--gc-sections
 
-$(shell mkdir -p $(APPDIR))
+$(shell mkdir -p $(APP_DIR))
+
+OPTS.A := $(APP_CFLAGS) $(APP_LDFLAGS)
+OPTS.B := $(file <$(APP_DIR)/build.opts)
+
+ifneq ($(OPTS.A),$(OPTS.B))
+$(info generating $(APP_DIR)/build.opts)
+$(file >$(APP_DIR)/build.opts,$(OPTS.A))
+endif
 
 # Track flags in a build.opts file so we can depend on it.
 # Write the file only if it does not already contain the
 # same options as currently defined.
-$(APPOBJ): $(APPDIR)/build.opts
-$(APPELF): $(APPDIR)/build.opts
+$(APP_OBJ): $(APP_DIR)/build.opts
+$(APP_ELF): $(APP_DIR)/build.opts
 
-OPTS.A := $(APPCFLAGS) $(APPLDFLAGS)
-OPTS.B := $(file <$(APPDIR)/build.opts)
-
-ifneq ($(OPTS.A),$(OPTS.B))
-$(file >$(APPDIR)/build.opts,$(OPTS.A))
-endif
-
-$(APPELF): _OBJ := $(APPOBJ)
-$(APPELF): _LDFLAGS := $(APPLDFLAGS) -T $(LDSCRIPT)
-$(APPLIB): _LIB := -lgcc
-$(APPELF): $(APPOBJ) $(LDSCRIPT) $(APPDIR)/build.opts
+$(APP_ELF): _OBJ := $(APP_OBJ)
+$(APP_ELF): _LDFLAGS := $(APP_LDFLAGS) -T $(APP_LDSCRIPT)
+$(APP_LIB): _LIB := -lgcc
+$(APP_ELF): $(APP_OBJ) $(APP_LDSCRIPT) $(APP_DIR)/build.opts
 	@$(info linking $@)
 	$(V)$(XGCC) $(_LDFLAGS) -o $@ $(_OBJ) $(_LIB)
 
-$(APPLST): $(APPELF)
+$(APP_LST): $(APP_ELF)
 	$(V)$(XOBJDUMP) -D $< > $@
 
-$(APPDIR)/%.o: _CFLAGS := $(APPCFLAGS)
+$(APP_DIR)/%.o: _CFLAGS := $(APP_CFLAGS)
 
-$(APPDIR)/%.o: %.c
+$(APP_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@$(info compiling $<)
 	$(V)$(XGCC) -c -o $@ $< $(_CFLAGS) -MD -MP -MT $@ -MF $(@:%o=%d)
 
-$(APPDIR)/%.o: %.S
+$(APP_DIR)/%.o: %.S
 	@mkdir -p $(dir $@)
 	@$(info compiling $<)
 	$(V)$(XGCC) -c -o $@ $< $(_CFLAGS) -MD -MP -MT $@ -MF $(@:%o=%d)
 
--include $(patsubst %.o,%.d,$(APPOBJ))
+# include compiler auto-deps
+-include $(patsubst %.o,%.d,$(APP_OBJ))
 
-run.$(APP):: _BIN := $(APPELF)
-run.$(APP):: $(APPELF) $(APPLST)
+run.$(APP_NAME):: $(QEMUBIOS)
+run.$(APP_NAME):: _BIN := $(APP_ELF)
+run.$(APP_NAME):: $(APP_ELF) $(APP_LST)
 	$(QEMU) $(QFLAGS) -kernel $(_BIN)
 
-debug.$(APP):: _BIN := $(APPELF)
-debug.$(APP):: $(APPELF) $(APPLST)
+debug.$(APP_NAME):: $(QEMUBIOS)
+debug.$(APP_NAME):: _BIN := $(APP_ELF)
+debug.$(APP_NAME):: $(APP_ELF) $(APP_LST)
 	$(QEMU) $(QFLAGS.GDB) -kernel $(_BIN)
 
-APP :=
-INC :=
-SRC :=
-
+APP_NAME :=
+APP_INC :=
+APP_SRC :=
+APP_LDSCRIPT :=

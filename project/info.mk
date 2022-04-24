@@ -1,5 +1,5 @@
 
-APP := info
-SRC := hw/src/start.S misc/info.c
-SRC += hw/src/debug.c $(LIBC_SRC)
+APP_NAME := info
+APP_SRC := hw/src/start.S misc/info.c
+APP_SRC += hw/src/debug.c $(LIBC_SRC)
 include make/app.mk
