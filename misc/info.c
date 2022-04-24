@@ -4,8 +4,7 @@
 #include <hw/debug.h>
 #include <hw/riscv.h>
 
-void start(uint32_t sp, uint32_t dtb) {
-	xprintf("Hello?\n");
+void start(uint32_t hartid, uint32_t dtb) {
 	xprintf("MSTATUS    %08x\n", csr_read(CSR_MSTATUS));
 	xprintf("MISA       %08x\n", csr_read(CSR_MISA));
 	xprintf("MCYCLE     %08x\n", csr_read(CSR_MCYCLE));

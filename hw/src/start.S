@@ -4,7 +4,6 @@
 .globl _start
 _start:
 	li sp, 0x81000000
-	mv a0, sp
 	jal start
 
 .globl exit
