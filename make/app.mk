@@ -55,11 +55,11 @@ $(APPDIR)/%.o: %.S
 -include $(patsubst %.o,%.d,$(APPOBJ))
 
 run.$(APP):: _BIN := $(APPELF)
-run.$(APP):: $(APPELF)
+run.$(APP):: $(APPELF) $(APPLST)
 	$(QEMU) $(QFLAGS) -kernel $(_BIN)
 
 debug.$(APP):: _BIN := $(APPELF)
-debug.$(APP):: $(APPELF)
+debug.$(APP):: $(APPELF) $(APPLST)
 	$(QEMU) $(QFLAGS.GDB) -kernel $(_BIN)
 
 APP :=
