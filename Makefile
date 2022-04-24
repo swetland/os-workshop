@@ -10,8 +10,9 @@ V := @
 # defaults for Ubuntu, can override with local.mk
 XTOOLCHAIN ?= /usr/bin/riscv64-unknown-elf-
 QEMU ?= /usr/bin/qemu-system-riscv32
+QEMUBIOS := out/bios.elf
 
-QFLAGS := -machine virt -bios none -nographic
+QFLAGS := -machine virt -bios $(QEMUBIOS) -nographic
 QFLAGS.GDB := $(QFLAGS) -gdb tcp::7777 -S
 
 ifeq ($(wildcard $(XTOOLCHAIN)gcc),)
