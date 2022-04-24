@@ -13,6 +13,27 @@ static inline uint32_t swap(uint32_t n) {
 		((n << 8) & 0x00FF0000);
 }
 
+int isstring(const char* s) {
+	switch (s[0]) {
+	case 'b':
+		if (!strcmp(s, "bootargs")) return 1;
+	case 'c':
+		if (!strcmp(s, "compatible")) return 1;
+		break;
+	case 'd':
+		if (!strcmp(s, "device_type")) return 1;
+		break;
+	case 'm':
+		if (!strcmp(s, "model")) return 1;
+		if (!strcmp(s, "mmu-type")) return 1;
+		break;
+	case 'r':
+		if (!strcmp(s, "riscv.isa")) return 1;
+		break;
+	}
+	return 0;
+}
+
 void xindent(unsigned count) {
 	while (count-- > 0) {
 		xputs("  ");
@@ -26,9 +47,6 @@ void fdt_walk(fdt_header_t* fdt) {
 	for (;;) {
 		switch(swap(*data++)) {
 		case FDT_PADDING:
-			xindent(indent);
-			xprintf("PADDING\n");
-			continue;
 		case FDT_NOP:
 			continue;
 		case FDT_BEGIN_NODE: {
@@ -47,7 +65,15 @@ void fdt_walk(fdt_header_t* fdt) {
 			uint32_t len = swap(*data++);
 			uint32_t name = swap(*data++);
 			xindent(indent);
-			xprintf("PROP '%s' %u '%s'\n", strtab + name, len, (char*) (void*) data);
+			xprintf("PROP '%s' %u:", strtab + name, len);
+			if (isstring(strtab + name)) {
+				xprintf(" '%s'\n", (char*) data);
+			} else {
+				for (unsigned n = 0; n < len; n++) {
+					xprintf(" %02x", ((uint8_t*)data)[n]);
+				}
+				xprintf("\n");
+			}
 			data += ((len + 3) >> 2);
 			break;
 		}
