@@ -3,7 +3,7 @@
 
 #include <hw/debug.h>
 
-int main(int argc, char** argv) {
+void start(void) {
 	int top = 1000, bottom = -1000, ystep = 50;
 	int left = -2500, right = 1000, xstep = 30;
 	int maxiter = 1000;
@@ -28,5 +28,4 @@ int main(int argc, char** argv) {
 	}
 
 	xprintf("Hello, Mandlebrot!\n");
-	return 0;
 }

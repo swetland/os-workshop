@@ -4,9 +4,8 @@
 .globl _start
 _start:
 	li sp, 0x81000000
-	li a0, 0
-	li a1, 0
-	jal main
+	mv a0, sp
+	jal start
 
 .globl exit
 exit:
