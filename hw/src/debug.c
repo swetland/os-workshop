@@ -9,12 +9,15 @@
 #define wr8(v,a) (*((volatile unsigned char*) (a)) = v)
 
 void xputc(unsigned c) {
+	if (c == '\n') {
+		wr8('\r', UART_BASE);
+	}
 	wr8(c, UART_BASE);
 }
 
 void xputs(const char* s) {
 	while (*s != 0) {
-		wr8(*s++, UART_BASE);
+		xputc(*s++);
 	}
 }
 
