@@ -53,6 +53,9 @@
 #define CSR_MCYCLE     0xB00 // Machine Cycle Counter
 #define CSR_MINSTRET   0xB02 // Machine Instructions Retired
 
+#define CSR_PMPCFG(n)  (0x3A0+(n)) // 0-15
+#define CSR_PMPADDR(n) (0x3B0+(n)) // 0-63
+
 // CSR_MSTATUS bits
 #define MSTATUS_TSR  0x00400000U // Trap SRET
 #define MSTATUS_TW   0x00200000U // Timeout Wait (trap on WFI)
@@ -129,6 +132,16 @@
 #define EXCb_INSTR_PAGE_FAULT      (1U << 12)
 #define EXCb_LOAD_PAGE_FAULT       (1U << 13)
 #define EXCb_STORE_PAGE_FAULT      (1U << 15)
+
+
+#define PMP_CFG_LOCK    (1U << 7) // disallow further rights until reset
+#define PMP_CFG_A_OFF   (0U << 3) // disable this entry
+#define PMP_CFG_A_TOR   (1U << 3) // match top of range (prev entry is bottom)
+#define PMP_CFG_A_NA4   (2U << 3) // match naturally aligned 4byte
+#define PMP_CFG_A_NAPOT (3U << 3) // match naturally aligned power of two
+#define PMP_CFG_X       (1U << 2) // execute
+#define PMP_CFG_W       (1U << 1) // write
+#define PMP_CFG_R       (1U << 0) // read
 
 // inline assembly helpers for CSR access, etc
 #ifndef __ASSEMBLER__
