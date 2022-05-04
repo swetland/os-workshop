@@ -4,9 +4,10 @@
 APP_DIR := $(BUILD)/$(APP_NAME)
 APP_ELF := $(BUILD)/$(APP_NAME).elf
 APP_LST := $(BUILD)/$(APP_NAME).lst
+APP_BIN := $(BUILD)/$(APP_NAME).bin
 APP_LDSCRIPT := $(if $(APP_LDSCRIPT),$(APP_LDSCRIPT),$(LDSCRIPT))
 
-ALL += $(APP_ELF) $(APP_LST)
+ALL += $(APP_ELF) $(APP_LST) $(APP_BIN)
 
 # Generate objects from sources.
 APP_OBJ := $(patsubst %.c,$(APP_DIR)/%.o,$(APP_SRC))
@@ -42,6 +43,9 @@ $(APP_ELF): $(APP_OBJ) $(APP_LDSCRIPT) $(APP_DIR)/build.opts
 $(APP_LST): $(APP_ELF)
 	$(V)$(XOBJDUMP) -D $< > $@
 
+$(APP_BIN): $(APP_ELF)
+	$(V)$(XOBJCOPY) -O binary $< $@
+
 $(APP_DIR)/%.o: _CFLAGS := $(APP_CFLAGS)
 
 $(APP_DIR)/%.o: %.c
@@ -52,7 +56,7 @@ $(APP_DIR)/%.o: %.c
 $(APP_DIR)/%.o: %.S
 	@mkdir -p $(dir $@)
 	@$(info compiling $<)
-	$(V)$(XGCC) -c -o $@ $< $(_CFLAGS) -MD -MP -MT $@ -MF $(@:%o=%d)
+	$(V)$(XGCC) -c -o $@ $< $(_CFLAGS) -D__ASSEMBLY__ -MD -MP -MT $@ -MF $(@:%o=%d)
 
 # include compiler auto-deps
 -include $(patsubst %.o,%.d,$(APP_OBJ))
