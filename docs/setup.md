@@ -2,21 +2,30 @@
 
 You will need a cross compiler (riscv32-elf-gcc), debugger (riscv-elf-gdb), and emulator (qemu-system-riscv32).
 
-If you already have these available and installed, simply edit `local.mk` at the root of this
-project to reflect how to invoke them:
-```
+See "Installing GCC and GDB" or "Building GCC and GDB" below for instructions.
+
+Qemu is a bit more complicated -- we need a custom version that has support for peripherals compatible with the FPGA SoC.
+
+See "Building Qemu" below.
+
+Once you have the compiler, debugger, and emulator installed, you can tell the build system
+where to find them by editing 'local.mk' at the root of this project:
+``` makefile
 XTOOLCHAIN := /path/to/bin/riscv32-elf-
 QEMU := /path/to/bin/qemu-system-riscv32
 ```
 
 Note that the toolchain path is a prefix, omitting `gcc` because the makefile will stick `gdb`, `objdump`, `ld`, etc on the end as needed.
 
-## Installing GCC, GDB, and QEMU on Ubuntu
+Once you're all set up, proceed to "Checking out and building" below.
+
+
+## Installing GCC and GDB Ubuntu
 This should work on Ubuntu 20.04.4LTS or newer.  Not sure about older versions.
 ```
-sudo apt-get install gcc-riscv64-unknown-elf qemu-system-misc gdb-multiarch
+sudo apt-get install gcc-riscv64-unknown-elf gdb-multiarch
 ```
-That should get you `riscv64-unknown-elf-gcc` and `qemu-system-riscv32` and `gdb-multiarch`, and you
+That should get you `riscv64-unknown-elf-gcc` and `gdb-multiarch`, and you
 can add the following to your `local.mk`:
 
 ``` makefile
@@ -24,7 +33,7 @@ XTOOLCHAIN := /usr/bin/riscv64-unknown-elf-
 QEMU := /usr/bin/qemu-system-riscv32
 ```
 
-Note that the toolchain is 64-bit, and the qemu system is 32; the compiler arguments in the main
+Note that the toolchain is 64-bit by default, and the qemu system is 32-bit; the compiler arguments in the main
 Makefile specify that a 32-bit binary should be built.
 
 ## Building GCC and GDB (if needed)
@@ -46,25 +55,41 @@ I like to keep all my cross compilers in a common place, so I do this:
 $ mv riscv32-elf-11.2.0-Linux-x86_64/ /toolchain/riscv32-11.2.0
 ```
 
-## Building Qemu (if needed)
-
-```
-wget https://download.qemu.org/qemu-7.0.0.tar.xz
-tar axvf qemu-7.0.0.tar.xz
-cd qemu-7.0.0
-./configure --prefix=/work/qemu --target-list=riscv32-softmmu
-make -j32
-make install
-```
-
-You can change `--prefix=` to point at where you want to install qemu or remove it to install in /usr/local (which will require running make install as root)
-
 ## Alternate Toolchain Build
 
 I haven't tried this, but it's the official-ish RISCV toolchain build system and looks like it should build gcc, gdb, and qemu:
 https://github.com/riscv-collab/riscv-gnu-toolchain
 
 Be sure to configure it for 32bit riscv.
+
+## Building Qemu
+
+You need to check out the modified qemu from github and select the "workshop" branch to build:
+
+```
+git clone https://github.com/swetland/qemu.git
+cd qemu
+git checkout -b workshop origin/workshop
+./configure --prefix=/toolchain/qemu --target-list=riscv32-softmmu
+make -j32
+```
+
+You could use `make install` to install qemu at the specified prefix, but since you may have to update it from time to time
+it's easiest to just configure things to point to the binary in the build itself.  Modify your `local.mk` to include:
+``` makefile
+QEMU := /path/to/qemu/build/qemu-system-riscv32
+```
+
+## Updating Qemu
+
+You may have to refresh your build from time to time...
+```
+git remote update
+git rebase origin/workshop
+make clean
+make -j32
+make install
+```
 
 ## Checking out and building
 
