@@ -3,7 +3,7 @@ ENTRY(_start)
 
 SECTIONS
 {
-  . = 0x80004000;
+  . = 0x40008000;
   .start  : { *(.start) }
   .text   : { *(.text*) }
   .rodata : { *(.rodata*) }

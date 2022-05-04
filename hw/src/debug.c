@@ -4,15 +4,19 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define UART_BASE 0x10000000
+#include <hw/platform.h>
+#include <hw/litex.h>
 
-#define wr8(v,a) (*((volatile unsigned char*) (a)) = v)
+#define uart_rd(a) io_rd32(UART0_BASE + LX_UART_ ## a)
+#define uart_wr(a,v) io_wr32(UART0_BASE + LX_UART_ ## a, v)
 
 void xputc(unsigned c) {
 	if (c == '\n') {
-		wr8('\r', UART_BASE);
+		while (uart_rd(TXFULL)) ;
+		uart_wr(TX, '\r');
 	}
-	wr8(c, UART_BASE);
+	while (uart_rd(TXFULL)) ;
+	uart_wr(TX, c);
 }
 
 void xputs(const char* s) {
