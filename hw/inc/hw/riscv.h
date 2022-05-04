@@ -28,7 +28,7 @@
 #define CSR_MVENDORID  0xF11 // Vendor ID
 #define CSR_MARCHID    0xF12 // Architecture ID
 #define CSR_MIMPID     0xF13 // Implementation ID
-#define CSR_MHARTIT    0xF14 // Hardware Thread ID
+#define CSR_MHARTID    0xF14 // Hardware Thread ID
 #define CSR_MCONFIGPTR 0xF15 // Pointer to Config Data Structure
 
 #define CSR_MSTATUS    0x300 // Machine Status
