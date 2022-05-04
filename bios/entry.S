@@ -112,8 +112,51 @@ mach_exception:
 	csrr t0, CSR_MSCRATCH
 	sw t0, 0x08(sp)
 
-	j mach_exception_handler
-	j .
+	jal mach_exception_handler
+
+	// save machine sp back into SSCRATCH
+	addi t0, sp, (32 * 4)
+	csrw CSR_MSCRATCH, t0
+
+	// return pc goes into MEPC for mret
+	lw t0, 0x00(sp)
+	csrw CSR_MEPC, t0
+
+	// restore remaining registers
+	lw x1, 0x04(sp)
+	lw x3, 0x0C(sp)
+	lw x4, 0x10(sp)
+	lw x5, 0x14(sp)
+	lw x6, 0x18(sp)
+	lw x7, 0x1C(sp)
+	lw x8, 0x20(sp)
+	lw x9, 0x24(sp)
+	lw x10, 0x28(sp)
+	lw x11, 0x2C(sp)
+	lw x12, 0x30(sp)
+	lw x13, 0x34(sp)
+	lw x14, 0x38(sp)
+	lw x15, 0x3C(sp)
+	lw x16, 0x40(sp)
+	lw x17, 0x44(sp)
+	lw x18, 0x48(sp)
+	lw x19, 0x4C(sp)
+	lw x20, 0x50(sp)
+	lw x21, 0x54(sp)
+	lw x22, 0x58(sp)
+	lw x23, 0x5C(sp)
+	lw x24, 0x60(sp)
+	lw x25, 0x64(sp)
+	lw x26, 0x68(sp)
+	lw x27, 0x6C(sp)
+	lw x28, 0x70(sp)
+	lw x29, 0x74(sp)
+	lw x30, 0x78(sp)
+	lw x31, 0x7C(sp)
+
+	lw sp, 0x08(sp)
+
+	mret
 
 .globl enter_mode_s
 enter_mode_s: // (a0, a1, svc_pc, svc_sp)
