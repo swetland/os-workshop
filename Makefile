@@ -28,6 +28,7 @@ endif
 XGCC := $(XTOOLCHAIN)gcc
 XOBJDUMP := $(XTOOLCHAIN)objdump
 XOBJCOPY := $(XTOOLCHAIN)objcopy
+XAR := $(XTOOLCHAIN)ar
 
 ARCHFLAGS := -march=rv32im -mabi=ilp32 -mcmodel=medany
 ARCHFLAGS += -static -nostdlib -nostartfiles -ffreestanding
@@ -39,13 +40,14 @@ LDSCRIPT := hw/simple.ld
 BUILD := out
 
 CFLAGS := -g -Wall -Ilibc/inc -Ihw/inc
-CFLAGS += -O2
+CFLAGS += -O1
 
 ALL :=
 
 LIBC_SRC := libc/src/printf.c $(wildcard libc/src/string/*.c)
 
-include $(wildcard project/*.mk)
+include $(wildcard project/*.lib.mk)
+include $(wildcard project/*.app.mk)
 
 build-all: $(ALL)
 
