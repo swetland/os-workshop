@@ -12,8 +12,10 @@ XTOOLCHAIN ?= /usr/bin/riscv64-unknown-elf-
 QEMU ?= /usr/bin/qemu-system-riscv32
 QEMUBIOS := out/bios.elf
 
-QFLAGS := -machine micro -bios $(QEMUBIOS) -nographic
+QFLAGS := -machine micro -bios $(QEMUBIOS)
 QFLAGS.GDB := $(QFLAGS) -gdb tcp::7777 -S
+QFLAGS.FB := -serial stdio
+QFLAGS.TTY := -nographic -monitor none -serial stdio
 
 ifeq ($(wildcard $(XTOOLCHAIN)gcc),)
 $(warning Cannot find toolchain $(XTOOLCHAIN))
@@ -40,7 +42,7 @@ LDSCRIPT := hw/simple.ld
 BUILD := out
 
 CFLAGS := -g -Wall -Ilibc/inc -Ihw/inc
-CFLAGS += -O1
+CFLAGS += -O2
 
 ALL :=
 
