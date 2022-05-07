@@ -6,66 +6,6 @@
 
 .globl mach_exception_entry
 mach_exception_entry:
-	j mach_exception
-	j .
-	j .
-	j .
-	j .
-	j .
-	j .
-mach_timer_entry:
-	// swap active sp with value in MSCRATCH (exception stack)
-	// interupts have been disabled on exception entry
-	csrrw sp, CSR_MSCRATCH, sp
-
-	// use the workspace above the exception stack to save
-	// registers and get necessary data
-	sw t0, IWS_SAVE0(sp)
-	sw t1, IWS_SAVE1(sp)
-	sw t2, IWS_SAVE2(sp)
-	sw t3, IWS_SAVE3(sp)
-	sw t4, IWS_SAVE4(sp)
-
-	lw t0, IWS_TIMECMP(sp)
-	lw t1, IWS_TICKINC(sp)
-
-	// read last match lo/hi
-	lw t2, 0(t0)
-	lw t3, 4(t0)
-
-	add t1, t2, t1
-	// t4 is carry bit
-	sltu t4, t1, t2
-	add t3, t4, t3
-
-	// avoid spurious irq by ensuring we can't roll back
-	li t4, -1
-	sw t4, 0(t0)
-
-	sw t3, 4(t0)
-	sw t1, 0(t0)
-
-	// set S MODE SW INT pending
-	csrsi CSR_SIP, INTb_SVC_SW
-
-#if 0
-	li t0, 0x10000000
-	li t1, '!'
-	sb t1, 0(t0)
-#endif
-
-	// restore registers
-	lw t0, IWS_SAVE0(sp)
-	lw t1, IWS_SAVE1(sp)
-	lw t2, IWS_SAVE2(sp)
-	lw t3, IWS_SAVE3(sp)
-	lw t4, IWS_SAVE4(sp)
-
-	// swap back to previous sp
-	csrrw sp, CSR_MSCRATCH, sp
-	mret
-
-mach_exception:
 	// swap active sp with value in MSCRATCH (exception stack)
 	// interupts have been disabled on exception entry
 	csrrw sp, CSR_MSCRATCH, sp
