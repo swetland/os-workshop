@@ -1,0 +1,59 @@
+--- The VGA fonts in src/env/video/vgafonts.c (copyleft_vgafonts.txt)
+
+This *compilation* is (c) Copyright 1991,1992 Joseph (Yossi) Gil.
+Permission is granted to use and redistribute the files comprising
+this collection in any way (including conversion to another format),
+provided that my name and addresses and this notice is preserved.
+
+Simple (dare I say trivial?) bitmapped screen fonts such as the ones
+included in this collection cannot be copyrighted. In general, one can
+only copyright programs that generate fonts. This is why postscript
+fonts are copyrightable. For more details refer to discussions various
+"legal" newsgroups. In addition, I have included a relevant excerpt
+from the FAQ of comp.fonts at the bottom of this document.
+
+No one can claim any copyright on the fonts in this archive. They
+have been collected from numerous sources. Legally speaking, you are
+*free* to do with the individual fonts whatever you like. Individual
+fonts are in the public domain. I do ask that you will kindly refrain
+from causing confusion by distributing modified versions of the fonts
+contained in this collection.
+
+Please send any all your EGA/VGA text mode fonts contributions to me
+rather than distributing a modified version of this collection. I
+will add your fonts to the next edition of this collection and happily
+acknowledge your help. Your cooperation will enable us all to benefit
+from your contribution. See the file LOOKING4.TXT for more details.
+
+I am trying to keep track of the origins of these fonts. See the file
+FONTORIG.TXT. Unfortunately, I only started to record this information
+on version 1.2. Records of origin of earlier fonts are missing.
+If you know the origin of any of the fonts here, please drop me a note.
+
+Staring on version 1.6 the collection also includes some of the
+miscellaneous utilities which I use for preparing it. Among these
+you will find programs for loading, viewing, trimming and otherwise
+manipulating the fonts. These utilities are also distributed as a
+separate archive called fntutlXX.ZIP where XX is the version number.
+All the utilities require no shareware payment. Restrictions on
+distribution and usage are only to the extent necessary to protect
+the free distribution.
+
+I see this is as my pleasant duty to pay tribute to the following
+individuals who communicated and contributed to this archive:
+
+ Dov Grobgeld <cfgrob@weizmann.weizmann.ac.il> 
+ Angelos Karageorgiou  <karage@insci.com>,<karage@scus1.ctstateu.edu> 
+ Alexandre (Alex)  Khalil <9999SC01@DT3.DT.UH.EDU>,<alex@dt.uh.edu>
+ Patrick Arzul <andrewd@cs.uct.ac.za>
+ Mike Threepoint <linhart@trident.usacs.rutgers.edu>
+ Glaude David [Glu] <dglaude@is1.vub.ac.be>
+ Jean-Marc Lasgouttes <Jean-Marc.Lasgouttes@inria.fr>
+ Itamar Even-Zohar <itiez@ccsg.tau.ac.il>
+ A.Weeks%bath.ac.uk@ib.rl.ac.uk
+ Miguel Farah.
+
+
+This collection would not have been what it today is without their
+help!
+
