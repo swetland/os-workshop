@@ -1,0 +1,8 @@
+[target.riscv32imac-unknown-none-elf]
+runner = "riscv64-unknown-elf-gcc"
+rustflags = [
+  "-C", "link-arg=-T../hw/simple.ld"
+]
+
+[build]
+target = "riscv32imac-unknown-none-elf"
