@@ -6,25 +6,25 @@
 
 #include <hw/debug.h>
 #include <hw/platform.h>
+#include <hw/litex.h>
 
 #define FB_WIDTH 640
 #define FB_HEIGHT 480
 
-unsigned colors[12] = {
-	0x00FF0000, 0x0000FF00, 0x000000FF,
-	0x00FFFF00, 0x0000FFFF, 0x00FF00FF,
-	0x00800000, 0x00008000, 0x00000080,
-	0x00808000, 0x00008080, 0x00800080,
+uint16_t colors[12] = {
+	0x1111, 0x2222, 0x3333, 0x4444,
+	0x5555, 0x6666, 0x7777, 0x8888,
+	0x9999, 0xAAAA, 0xBBBB, 0xCCCC,
 };
 
 static inline void plot(unsigned px, unsigned py, unsigned c) {
-	((unsigned volatile*) FRAMEBUFFER_BASE)[px + py * FB_WIDTH] = c;
+	((uint16_t volatile*) FRAMEBUFFER_BASE)[px + py * FB_WIDTH] = c;
 }
 
 void start(void) {
 	xputs("Hello, Mandelbrot!\n");
 
-	memset((void*) FRAMEBUFFER_BASE, 0, 640 * 480 * 4);
+	memset((void*) FRAMEBUFFER_BASE, 0, 640 * 480 * 2);
 
 	for (int py = 0; py < FB_HEIGHT; py++) {
 		int y0 = 1300 - (2600 * py) / FB_HEIGHT;
