@@ -1,5 +1,8 @@
 
 # OS Workshop
 
-[Setup Instructions](docs/setup.md)
+### [Software Setup Instructions](docs/setup.md)
+
+### [Hardware Setup Instructions](docs/hardware-setup.md)
+
 
