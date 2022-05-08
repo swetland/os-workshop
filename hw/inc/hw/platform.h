@@ -8,7 +8,7 @@
 #define DRAM_BASE          0x40000000
 #define FRAMEBUFFER_BASE   0x40C00000 // default fb dma base
 #define DRAM_SIZE          (32*1024*1024)
-#define BIOS_SIZE          0x00008000
+#define BOOTLOADER_SIZE    0x00008000
 #define MMIO_BASE          0xF0000000
 
 // MMIO Devices

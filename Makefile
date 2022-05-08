@@ -10,7 +10,7 @@ V := @
 # defaults for Ubuntu, can override with local.mk
 XTOOLCHAIN ?= /usr/bin/riscv64-unknown-elf-
 QEMU ?= /usr/bin/qemu-system-riscv32
-QEMUBIOS := out/bios.elf
+QEMUBIOS := out/boot.elf
 
 QFLAGS := -machine micro -bios $(QEMUBIOS)
 QFLAGS.GDB := $(QFLAGS) -gdb tcp::7777 -S

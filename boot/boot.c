@@ -4,13 +4,13 @@
 #include <hw/riscv.h>
 #include <hw/riscv-clint.h>
 #include <hw/debug.h>
-#include "bios.h"
+#include "boot.h"
 
 #include <hw/platform.h>
 #include <hw/litex.h>
 
-// we expect the supervisor program to be in memory after the end of the BIOS
-#define SVC_ENTRY (DRAM_BASE + BIOS_SIZE)
+// we expect the supervisor program to be in memory after the end of the bootloader
+#define SVC_ENTRY (DRAM_BASE + BOOTLOADER_SIZE)
 
 static const char* cause_name(uint32_t n) {
 	if (n & 0x80000000U) {
@@ -85,7 +85,7 @@ void mach_exception_handler(uint32_t regs[32]) {
 #define EXC_LIST (EXCb_ECALL_UMODE)
 
 void start(uint32_t hartid, uint32_t fdt) {
-	xprintf("\n** Frobozz Magic BIOS v0.1 **\n\n");
+	xprintf("\n** Frobozz Magic Bootloader v0.2 **\n\n");
 
 	int qemu = (csr_read(CSR_MVENDORID) == 0);
 

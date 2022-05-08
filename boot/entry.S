@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 
 #include <hw/riscv.h>
-#include "bios.h"
+#include "boot.h"
 
 .globl mach_exception_entry
 mach_exception_entry:
