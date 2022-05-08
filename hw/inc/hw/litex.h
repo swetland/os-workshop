@@ -1,6 +1,13 @@
 
 #pragma once
 
+// Litex CTRL Registers
+
+#define LX_CTRL_RESET         0x000 // write to reset SoC
+#define LX_CTRL_SCRATCH       0x004
+#define LX_CTRL_BUS_ERRORS    0x008
+
+
 // Litex UART Registers
 
 #define LX_UART_TX            0x000 // write to transmit
@@ -31,3 +38,26 @@
 #define LX_TIMER_MAX          0x100
 
 #define LX_TIMER_EVb_ZERO     (1U << 0) // value is zero
+
+
+// Litex Video Framebuffer
+
+#define LX_VFB_DMA_BASE      0x000
+#define LX_VFB_DMA_LENGTH    0x004
+#define LX_VFB_DMA_ENABLE    0x008
+#define LX_VFB_DMA_DONE      0x00C
+#define LX_VFB_DMA_LOOP      0x010
+#define LX_VFB_DMA_OFFSET    0x014
+
+
+// Litex Video Timing Generator
+
+#define LX_VTG_ENABLE        0x000
+#define LX_VTG_HRES          0x004
+#define LX_VTG_HSYNC_START   0x008
+#define LX_VTG_HSYNC_END     0x00C
+#define LX_VTG_HSCAN         0x010
+#define LX_VTG_VRES          0x004
+#define LX_VTG_VSYNC_START   0x008
+#define LX_VTG_VSYNC_END     0x00C
+#define LX_VTG_VSCAN         0x010
