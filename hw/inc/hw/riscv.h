@@ -25,6 +25,10 @@
 
 #define CSR_SATP       0x180 // Supervisor Addr Translation and Protection
 
+#define SATP_ENABLE    0x80000000
+#define SATP_ASID_SHIFT 22
+#define SATP_ASID_SIZE  9
+
 #define CSR_MVENDORID  0xF11 // Vendor ID
 #define CSR_MARCHID    0xF12 // Architecture ID
 #define CSR_MIMPID     0xF13 // Implementation ID
@@ -143,6 +147,18 @@
 #define PMP_CFG_W       (1U << 1) // write
 #define PMP_CFG_R       (1U << 0) // read
 
+
+#define PTE_V           0x001 // Valid Entry
+#define PTE_R           0x002 // Readable
+#define PTE_W           0x004 // Writable
+#define PTE_X           0x008 // Executable
+#define PTE_U           0x010 // User Accessible
+#define PTE_G           0x020 // Global (same in all addr spaces)
+#define PTE_A           0x040 // Accessed
+#define PTE_D           0x080 // Dirty
+#define PTE_RSW0        0x100 // Reserved For Software 0
+#define PTE_RSW1        0x200 // Reserved For Software 1
+
 // inline assembly helpers for CSR access, etc
 #ifndef __ASSEMBLER__
 #include <stdint.h>
@@ -163,5 +179,22 @@
 
 #define csr_clr(csr, bit) ({ \
 	uint32_t v; asm volatile ("csrrc %0, " __S(csr) ", %1" : "=r"(v) : "rK"(bit)); v; })
+
+static inline void tlb_flush_all(void) {
+	asm volatile("sfence.vma zero, zero");
+}
+
+static inline void tlb_fush_addr(uint32_t a) {
+	asm volatile("sfence.vma %0, zero" :: "r"(a));
+}
+
+// sfence.vma rs2, rs1  (asid, addr)
+// sfence.vma x0, x0    orders all r/w to any level page table
+//                      invalidates all TLB entries
+// sfence.vma x1, x0    orders all r/w to any level page table for ASID x1
+//                      invalidates all non-global ASID x1 TLB entries
+// sfence.vma x0, x2    orders all r/w to leaf PTEs for vaddr in x2
+//                      invalidates TLB entries for vaddr x2
+// sfence.vma x1, x2    as last but for ASID x1
 
 #endif
