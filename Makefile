@@ -37,7 +37,7 @@ ARCHFLAGS += -static -nostdlib -nostartfiles -ffreestanding
 ARCHFLAGS += -ffunction-sections -fdata-sections
 ARCHFLAGS += -fno-builtin -fno-strict-aliasing
 
-LDSCRIPT := hw/simple.ld
+LDSCRIPT := hw/app.ram.ld
 
 BUILD := out
 
