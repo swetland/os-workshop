@@ -13,8 +13,8 @@
 *********************************************************************/
 
 /*************************** HEADER FILES ***************************/
-#include <stdlib.h>
-#include <memory.h>
+//#include <stdlib.h>
+#include <string.h>
 #include "sha256.h"
 
 /****************************** MACROS ******************************/
@@ -29,7 +29,7 @@
 #define SIG1(x) (ROTRIGHT(x,17) ^ ROTRIGHT(x,19) ^ ((x) >> 10))
 
 /**************************** VARIABLES *****************************/
-static const WORD k[64] = {
+static const uint32_t k[64] = {
 	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
 	0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
 	0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
@@ -41,12 +41,14 @@ static const WORD k[64] = {
 };
 
 /*********************** FUNCTION DEFINITIONS ***********************/
-void sha256_transform(SHA256_CTX *ctx, const BYTE data[])
-{
-	WORD a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
+void sha256_transform(SHA256_CTX *ctx, const uint8_t data[]) {
+	uint32_t a, b, c, d, e, f, g, h, i, j, t1, t2, m[64];
 
 	for (i = 0, j = 0; i < 16; ++i, j += 4)
-		m[i] = ((WORD)data[j] << 24) | ((WORD)data[j + 1] << 16) | ((WORD)data[j + 2] << 8) | ((WORD)data[j + 3]);
+		m[i] = ((uint32_t)data[j] << 24) |
+			((uint32_t)data[j + 1] << 16) |
+			((uint32_t)data[j + 2] << 8) |
+			((uint32_t)data[j + 3]);
 	for ( ; i < 64; ++i)
 		m[i] = SIG1(m[i - 2]) + m[i - 7] + SIG0(m[i - 15]) + m[i - 16];
 
@@ -82,8 +84,7 @@ void sha256_transform(SHA256_CTX *ctx, const BYTE data[])
 	ctx->state[7] += h;
 }
 
-void sha256_init(SHA256_CTX *ctx)
-{
+void sha256_init(SHA256_CTX *ctx) {
 	ctx->datalen = 0;
 	ctx->bitlen = 0;
 	ctx->state[0] = 0x6a09e667;
@@ -96,9 +97,8 @@ void sha256_init(SHA256_CTX *ctx)
 	ctx->state[7] = 0x5be0cd19;
 }
 
-void sha256_update(SHA256_CTX *ctx, const BYTE data[], size_t len)
-{
-	WORD i;
+void sha256_update(SHA256_CTX *ctx, const uint8_t data[], size_t len) {
+	uint32_t i;
 
 	for (i = 0; i < len; ++i) {
 		ctx->data[ctx->datalen] = data[i];
@@ -111,9 +111,8 @@ void sha256_update(SHA256_CTX *ctx, const BYTE data[], size_t len)
 	}
 }
 
-void sha256_final(SHA256_CTX *ctx, BYTE hash[])
-{
-	WORD i;
+void sha256_final(SHA256_CTX *ctx, uint8_t hash[]) {
+	uint32_t i;
 
 	i = ctx->datalen;
 
