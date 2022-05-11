@@ -3,6 +3,7 @@
 
 #include <hw/debug.h>
 #include <hw/riscv.h>
+#include <hw/intrinsics.h>
 
 void start(uint32_t hartid, uint32_t dtb) {
 	xprintf("MSTATUS    %08x\n", csr_read(CSR_MSTATUS));

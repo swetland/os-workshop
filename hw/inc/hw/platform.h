@@ -34,6 +34,7 @@
 #ifndef __ASSEMBLY__
 
 #include <stdint.h>
+#include <hw/intrinsics.h>
 
 static inline void io_wr32(uint32_t a, uint32_t v) {
 	*((volatile uint32_t*) a) = v;

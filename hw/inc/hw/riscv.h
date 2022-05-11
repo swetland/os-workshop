@@ -1,6 +1,8 @@
 // Copyright 2022, Brian Swetland <swetland@frotz.net>
 // Licensed under the Apache License, Version 2.0
 
+// RISCV RV32 CSRs
+
 #pragma once
 
 #define CSR_FFLAGS     0x001 // FP Exceptions
@@ -159,42 +161,3 @@
 #define PTE_RSW0        0x100 // Reserved For Software 0
 #define PTE_RSW1        0x200 // Reserved For Software 1
 
-// inline assembly helpers for CSR access, etc
-#ifndef __ASSEMBLER__
-#include <stdint.h>
-
-#define __S(x) #x
-
-#define csr_read(csr) ({ \
-	uint32_t v; asm volatile ("csrr %0, " __S(csr) : "=r"(v)); v; })
-
-#define csr_write(csr, val) ({ \
-	asm volatile ("csrw " __S(csr) ", %0" :: "rK"(val)); });
-
-#define csr_swap(csr, val) ({ \
-	uint32_t v; asm volatile ("csrrw %0, " __S(csr) ", %1" : "=r"(v) : "rK"(val)); v; })
-
-#define csr_set(csr, bit) ({ \
-	uint32_t v; asm volatile ("csrrs %0, " __S(csr) ", %1" : "=r"(v) : "rK"(bit)); v; })
-
-#define csr_clr(csr, bit) ({ \
-	uint32_t v; asm volatile ("csrrc %0, " __S(csr) ", %1" : "=r"(v) : "rK"(bit)); v; })
-
-static inline void tlb_flush_all(void) {
-	asm volatile("sfence.vma zero, zero");
-}
-
-static inline void tlb_fush_addr(uint32_t a) {
-	asm volatile("sfence.vma %0, zero" :: "r"(a));
-}
-
-// sfence.vma rs2, rs1  (asid, addr)
-// sfence.vma x0, x0    orders all r/w to any level page table
-//                      invalidates all TLB entries
-// sfence.vma x1, x0    orders all r/w to any level page table for ASID x1
-//                      invalidates all non-global ASID x1 TLB entries
-// sfence.vma x0, x2    orders all r/w to leaf PTEs for vaddr in x2
-//                      invalidates TLB entries for vaddr x2
-// sfence.vma x1, x2    as last but for ASID x1
-
-#endif

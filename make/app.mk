@@ -22,7 +22,7 @@ $(MOD_ELF): $(MOD_OBJ) $(MOD_LDSCRIPT)
 	$(V)$(XGCC) $(_LDFLAGS) -o $@ $(_OBJ) $(_LIB)
 
 $(MOD_LST): $(MOD_ELF)
-	$(V)$(XOBJDUMP) -D $< > $@
+	$(V)$(XOBJDUMP) -d -z $< > $@
 
 $(MOD_BIN): $(MOD_ELF)
 	$(V)$(XOBJCOPY) -O binary $< $@
