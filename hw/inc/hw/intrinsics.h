@@ -3,6 +3,10 @@
 
 // inline assembly helpers for use from C
 
+// note: "volatile" instructs GCC to not discard the assmebly
+// or move it outside of loops, etc, even if the optimizer
+// thinks it's safe to do so. 
+
 #pragma once
 
 #include <stdint.h>
@@ -57,18 +61,18 @@ static inline void irq_restore(irqstate_t state) {
 // Thread Pointer Accessors
 
 static inline void* threadptr_get(void) {
-	void *ptr; asm ("mv %0, tp" : "=r"(ptr)); return ptr;
+	void *ptr; asm volatile ("mv %0, tp" : "=r"(ptr)); return ptr;
 }
 
 static inline void threadptr_set(void* ptr) {
-	asm ("mv tp, %0" :: "r"(ptr));
+	asm volatile ("mv tp, %0" :: "r"(ptr));
 }
 
 #define threadptr_getf(type, field) ({\
-	type T; typeof(T.field) v; asm ("lw %0, %1(tp)" : "=r"(v) : "i"(offsetof(type,field))); v; })
+	type T; typeof(T.field) v; asm volatile ("lw %0, %1(tp)" : "=r"(v) : "i"(offsetof(type,field))); v; })
 
 #define threadptr_setf(type, field, val) ({\
-	asm ("sw %0, %1(tp)" :: "r"(val), "i"(offsetof(type,field))); })
+	asm volatile ("sw %0, %1(tp)" :: "r"(val), "i"(offsetof(type,field))); })
 
 
 // TLB Cache Managemant
