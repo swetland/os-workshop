@@ -13,6 +13,3 @@ int  xgetc(void);
 // debug-printf.c -- calls xputs()
 void xprintf(const char* fmt, ...);
 
-// print-exception.c -- calls xprintf()
-void xprint_exception(uint32_t regs[32]);
-

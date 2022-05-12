@@ -23,6 +23,7 @@ context_switch:
 	sw s9, 0x34(a0)
 	sw s10, 0x38(a0)
 	sw s11, 0x3C(a0)
+
         // load new context from next
 	lw ra, 0x00(a1)
 	lw sp, 0x04(a1)
@@ -40,13 +41,17 @@ context_switch:
 	lw s9, 0x34(a1)
 	lw s10, 0x38(a1)
 	lw s11, 0x3C(a1)
+
 	// return to new context
 	ret
 
+// startup helper
+// calls routine in s2 with s0, s1 as arguments
+// then calls thread_exit() if that routine returns
 .globl context_entry
 context_entry:
 	mv a0, s0
 	mv a1, s1
 	jalr s2
-	j context_exit
+	j thread_exit
 

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 
 #include <hw/riscv.h>
+#include <hw/context.h>
 #include <hw/intrinsics.h>
 #include <hw/debug.h>
 
@@ -13,26 +14,9 @@
 // we expect the supervisor program to be in memory after the end of the bootloader
 #define SVC_ENTRY (DRAM_BASE + BOOTLOADER_SIZE)
 
-void mach_exception_handler(uint32_t regs[32]) {
-#if EMULATE_MISSING_CSR_READS
-	uint32_t mcause = csr_read(CSR_MCAUSE);
-	uint32_t mtval = csr_read(CSR_MTVAL);
-
-	// fragile: no mtval on qemu
-	if (mcause == 2) mtval = *((uint32_t*) regs[0]);
-
-	if ((mcause == 2) && ((mtval & (~0xFFF00F80)) == 0x00002073)) {
-		uint32_t rd = (mtval >> 7) & 31;
-		xprintf("BAD CSR READ @%08x (%08x) -> x%u\n", regs[0], mtval, rd);
-		regs[rd] = 0xDEADBEEF;
-		regs[0] += 4;
-		return;
-	}
-#endif
-
+void mach_exception_handler(eframe_t *ef) {
 	xprintf("\n** MACHINE EXCEPTION **\n");
-	xprint_exception(regs);
-
+	xprint_m_exception(ef);
 	xprintf("\nHALT\n");
 	for (;;) ;
 }
@@ -69,6 +53,7 @@ void start(uint32_t hartid, uint32_t fdt) {
 
 	xprintf("SVC ENTRY @0x%08x\n\n", SVC_ENTRY);
 
-	enter_mode_s(hartid, fdt, SVC_ENTRY, 0);
+	exit_mode_m(hartid, fdt, SVC_ENTRY, 0);
+
 }
 
