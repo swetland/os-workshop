@@ -5,4 +5,6 @@
 
 ### [Hardware Setup Instructions](docs/hardware-setup.md)
 
+### [Build System Documentation](docs/build-system.md)
+
 

@@ -4,7 +4,8 @@
 # Todo: check for missing inputs, duplicate module names, etc
 
 # Assemble compile and link flags.
-MOD_CFLAGS := $(ARCHFLAGS) $(CFLAGS) $(patsubst %,-I%,$(MOD_INC))
+MOD_CFLAGS := $(ARCHFLAGS) $(CFLAGS) 
+MOD_CFLAGS += $(patsubst %,-I%,$(MOD_INC)) $(patsubst %,-Ilib%/inc,$(MOD_LIB))
 MOD_LDFLAGS := $(ARCHFLAGS) -Wl,--gc-sections
 
 # Generate objects from sources.

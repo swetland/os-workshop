@@ -2,16 +2,17 @@
 ## Licensed under the Apache License, Version 2.0
 
 MOD_DIR := $(BUILD)/lib$(MOD_NAME)
-MOD_LIB := $(BUILD)/lib$(MOD_NAME).a
+MOD_LIB += $(MOD_NAME)
+MOD_ALIB := $(BUILD)/lib$(MOD_NAME).a
 
-ALL += $(MOD_LIB)
+ALL += $(MOD_ALIB)
 
 include make/rules.mk
 
-$(MOD_LIB): $(MOD_DIR)/build.opts 
+$(MOD_ALIB): $(MOD_DIR)/build.opts 
 
-$(MOD_LIB): _OBJ := $(MOD_OBJ)
-$(MOD_LIB): $(MOD_OBJ) $(MOD_DIR)/build.opts
+$(MOD_ALIB): _OBJ := $(MOD_OBJ)
+$(MOD_ALIB): $(MOD_OBJ) $(MOD_DIR)/build.opts
 	@$(info linking $@)
 	@rm -f $@
 	$(V)$(XAR) -crs $@ -o $@ $(_OBJ)
