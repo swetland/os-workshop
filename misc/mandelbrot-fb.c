@@ -7,6 +7,7 @@
 #include <hw/debug.h>
 #include <hw/platform.h>
 #include <hw/litex.h>
+#include <gfx/gfx.h>
 
 #define FB_WIDTH 640
 #define FB_HEIGHT 480
@@ -17,14 +18,15 @@ uint16_t colors[12] = {
 	0x9999, 0xAAAA, 0xBBBB, 0xCCCC,
 };
 
-static inline void plot(unsigned px, unsigned py, unsigned c) {
-	((uint16_t volatile*) FRAMEBUFFER_BASE)[px + py * FB_WIDTH] = c;
-}
-
 void start(void) {
 	xputs("Hello, Mandelbrot!\n");
 
-	memset((void*) FRAMEBUFFER_BASE, 0, 640 * 480 * 2);
+	gfx_surface_t gs;
+	gfx_init_display(&gs);
+
+	memset((void*) gs.pixels, 0, gs.width * gs.height * 2);
+
+	gfx_puts(&gs, 0, gs.height - 17, "Hello, Mandelbrot!");
 
 	for (int py = 0; py < FB_HEIGHT; py++) {
 		int y0 = 1300 - (2600 * py) / FB_HEIGHT;
@@ -35,15 +37,20 @@ void start(void) {
 				int x2 = x * x / 1000;
 				int y2 = y * y / 1000;
 				if ((x2 + y2) > 4000) {
-					plot(px, py, colors[(i > 11) ? 11 : i]);
+					gs.fgcolor = colors[(i > 11) ? 11 : i];
+					gfx_plot(&gs, px, py);
 					goto done;
 				}
 				y = 2 * x * y / 1000 + y0;
 				x = x2 - y2 + x0;
 			}
-			plot(px, py, 0);
+			gs.fgcolor = 0;
+			gfx_plot(&gs, px, py);
 		done:
 			;
 		}
+		gs.fgcolor = 0xFFFF;
 	}
+
+	gfx_puts(&gs, 0, gs.height - 16, "Hello, Mandelbrot!");
 }
