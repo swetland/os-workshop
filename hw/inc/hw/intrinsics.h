@@ -37,12 +37,12 @@ typedef uint32_t irqstate_t;
 
 // Disable Interrupts
 static inline void irq_disable(void) {
-	asm volatile("csrrc x0, sstatus, %1" :: "i"(SSTATUS_SIE));
+	asm volatile("csrrc x0, sstatus, %0" :: "i"(SSTATUS_SIE));
 }
 
 // Enable Interrupts
 static inline void irq_enable(void) {
-	asm volatile("csrrs x0, sstatus, %1" :: "i"(SSTATUS_SIE));
+	asm volatile("csrrs x0, sstatus, %0" :: "i"(SSTATUS_SIE));
 }
 
 // Disable Interrupts and return the previous interrupt state
