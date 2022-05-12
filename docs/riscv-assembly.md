@@ -30,7 +30,7 @@ The core 32bit integer instruction set for RISCV is pretty small:
 | beq rs1, rs2, addr | branch if equal | if rs1 == rs2 then pc = addr [2] |
 | bne rs1, rs2, addr | branch if not equal | if rs1 != rs2 then pc = addr [2] |
 | blt rs1, rs2, addr | branch if less than| if rs1 < rs2 then pc = addr [2] |
-| blt rs1, rs2, addr | branch if less than (unsigned) | if rs1 < rs2 then pc = addr [2] |
+| bltu rs1, rs2, addr | branch if less than (unsigned) | if rs1 < rs2 then pc = addr [2] |
 | bge rs1, rs2, addr | branch if >= | if rs1 >= rs2 then pc = addr [2] |
 | bgeu rs1, rs2, addr | branch if >= (unsigned) | if rs1 >= rs2 then pc = addr [2] |
 | lw rd, s12(rs1) | load word | rd = *((u32*) (rs1 + s12)) |
