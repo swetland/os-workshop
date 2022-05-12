@@ -41,7 +41,7 @@ LDSCRIPT := hw/app.ram.ld
 
 BUILD := out
 
-CFLAGS := -g -Wall -Ilibc/inc -Ihw/inc
+CFLAGS := -g -Wall -Ihw/inc
 CFLAGS += -O2
 
 ALL :=
