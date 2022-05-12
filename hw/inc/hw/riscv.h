@@ -86,6 +86,7 @@
 
 #define SSTATUS_XS_SHIFT 15
 #define SSTATUS_FS_SHIFT 13
+#define SSTATUS_SPP_SHIFT 8
 
 // Privilege Levels
 #define PRIV_U 0 // User
@@ -110,7 +111,7 @@
 
 // Exception numbers (xCAUSE) or bits (MEDELEG)
 #define EXCn_INSTR_ADDR_MISALIGN   0
-#define EXCn_INSTR_ACCES_FAULT     1
+#define EXCn_INSTR_ACCESS_FAULT    1
 #define EXCn_ILLEGAL_INSTR         2
 #define EXCn_BREAKPOINT            3
 #define EXCn_LOAD_ADDR_MISALIGN    4
@@ -125,7 +126,7 @@
 #define EXCn_STORE_PAGE_FAULT      15
 
 #define EXCb_INSTR_ADDR_MISALIGN   (1U << 0)
-#define EXCb_INSTR_ACCES_FAULT     (1U << 1)
+#define EXCb_INSTR_ACCESS_FAULT    (1U << 1)
 #define EXCb_ILLEGAL_INSTR         (1U << 2)
 #define EXCb_BREAKPOINT            (1U << 3)
 #define EXCb_LOAD_ADDR_MISALIGN    (1U << 4)
