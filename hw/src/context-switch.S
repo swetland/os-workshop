@@ -3,10 +3,10 @@
 
 // this code must match the structure rv32_ctxt_t in context-switch.h
 
-// context_switch(rv32_ctxt_t* prev, rv32_ctxt_t* next)
+// void context_switch(cframe_t* from, cframe_t* to)
 .globl context_switch
 context_switch:
-	// save old context to prev
+	// save old context to 'from'
 	sw ra, 0x00(a0)
 	sw sp, 0x04(a0)
 	sw gp, 0x08(a0)
@@ -24,7 +24,7 @@ context_switch:
 	sw s10, 0x38(a0)
 	sw s11, 0x3C(a0)
 
-        // load new context from next
+        // load new context from 'to'
 	lw ra, 0x00(a1)
 	lw sp, 0x04(a1)
 	lw gp, 0x08(a1)
@@ -54,4 +54,3 @@ context_entry:
 	mv a1, s1
 	jalr s2
 	j thread_exit
-
