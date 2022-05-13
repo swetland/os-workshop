@@ -18,8 +18,8 @@ struct gfx_surface {
 	uint32_t bgcolor;
 	uint32_t reserved;
 
-	void (*plot)(gfx_surface_t* gs, uint32_t x, uint32_t y);
-	void (*hline)(gfx_surface_t* gs, uint32_t x0, uint32_t y, uint32_t x1);
+	void (*plot)(gfx_surface_t* gs, uint32_t x, uint32_t y, uint32_t pxl);
+	void (*hline)(gfx_surface_t* gs, uint32_t x0, uint32_t y, uint32_t x1, uint32_t pxl);
 	void (*putc)(gfx_surface_t* gs, uint32_t x, uint32_t y, uint32_t ch);
 };
 
@@ -29,19 +29,19 @@ void gfx_init_display(gfx_surface_t *gs);
 void gfx_init(gfx_surface_t* gs);
 
 static inline void gfx_plot(gfx_surface_t* gs, uint32_t x, uint32_t y) {
-	gs->plot(gs, x, y);
+	gs->plot(gs, x, y, gs->fgcolor);
 }
 
 static inline void gfx_hline(gfx_surface_t* gs, uint32_t x0, uint32_t y, uint32_t x1) {
-	gs->hline(gs, x0, y, x1);
+	gs->hline(gs, x0, y, x1, gs->fgcolor);
 }
 
 static inline void gfx_putc(gfx_surface_t* gs, uint32_t x, uint32_t y, uint32_t ch) {
 	gs->putc(gs, x, y, ch);
 }
 
-void gfx_fill(gfx_surface_t* gs, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1);
-void gfx_clear(gfx_surface_t* gs);
+void gfx_fill(gfx_surface_t* gs, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t pxl);
+void gfx_clear(gfx_surface_t* gs, uint32_t pxl);
 void gfx_puts(gfx_surface_t* gs, uint32_t x, uint32_t y, const char* s);
 void gfx_printf(gfx_surface_t* gs, uint32_t x, uint32_t y, const char* fmt, ...);
 

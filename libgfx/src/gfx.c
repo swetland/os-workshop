@@ -15,19 +15,19 @@ extern uint8_t vga_rom_16[256 * 16];
 #define CH_HEIGHT  16
 
 // drawing routines for unknown pixfmt
-static void plot0(gfx_surface_t *gs, uint32_t x, uint32_t y) {}
-static void hline0(gfx_surface_t *gs, uint32_t x0, uint32_t y, uint32_t x1) {}
+static void plot0(gfx_surface_t *gs, uint32_t x, uint32_t y, uint32_t pxl) {}
+static void hline0(gfx_surface_t *gs, uint32_t x0, uint32_t y, uint32_t x1, uint32_t pxl) {}
 static void putc0(gfx_surface_t *gs, uint32_t x, uint32_t y, uint32_t c) {}
 
 // drawing routines for 16bpp pixfmt
-static void plot16(gfx_surface_t *gs, uint32_t x, uint32_t y) {
+static void plot16(gfx_surface_t *gs, uint32_t x, uint32_t y, uint32_t pxl) {
 	if (unlikely((x >= gs->width) || (y >= gs->height))) {
 		return;
 	}	
-	((uint16_t*) (gs->pixels))[x + y * gs->stride] = gs->fgcolor;
+	((uint16_t*) (gs->pixels))[x + y * gs->stride] = pxl;
 }
  
-static void hline16(gfx_surface_t *gs, uint32_t x0, uint32_t y, uint32_t x1) {
+static void hline16(gfx_surface_t *gs, uint32_t x0, uint32_t y, uint32_t x1, uint32_t pxl) {
 	if (unlikely((x0 >= gs->width) || (y >= gs->height) || (x1 <= x0))) {
 		return;
 	}
@@ -36,9 +36,8 @@ static void hline16(gfx_surface_t *gs, uint32_t x0, uint32_t y, uint32_t x1) {
 	}
 	uint16_t *pixels = ((uint16_t*)gs->pixels) + x0 + y * gs->stride;
 	uint16_t *end = pixels + x1 - x0;
-	uint32_t c = gs->fgcolor;
 	while (pixels < end) {
-		*pixels++ = c;
+		*pixels++ = pxl;
 	}
 }
 
@@ -89,15 +88,15 @@ void gfx_init_display(gfx_surface_t *gs) {
 	gfx_init(gs);
 }
 
-void gfx_fill(gfx_surface_t* gs, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
+void gfx_fill(gfx_surface_t* gs, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t pxl) {
 	while (y0 < y1) {
-		gs->hline(gs, x0, y0, x1);
+		gs->hline(gs, x0, y0, x1, pxl);
 		y0++;
 	}
 }
 
-void gfx_clear(gfx_surface_t* gs) {
-	gfx_fill(gs, 0, 0, gs->width, gs->height);
+void gfx_clear(gfx_surface_t* gs, uint32_t pxl) {
+	gfx_fill(gs, 0, 0, gs->width, gs->height, pxl);
 }
 
 void gfx_puts(gfx_surface_t *gs, uint32_t x, uint32_t y, const char* s) {
