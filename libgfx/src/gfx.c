@@ -34,7 +34,7 @@ static void hline16(gfx_surface_t *gs, uint32_t x0, uint32_t y, uint32_t x1) {
 	if (unlikely((x1 > gs->width))) {
 		x1 = gs->width;
 	}
-	uint16_t *pixels = gs->pixels + x0 + y * gs->stride;
+	uint16_t *pixels = ((uint16_t*)gs->pixels) + x0 + y * gs->stride;
 	uint16_t *end = pixels + x1 - x0;
 	uint32_t c = gs->fgcolor;
 	while (pixels < end) {
@@ -87,6 +87,17 @@ void gfx_init_display(gfx_surface_t *gs) {
 	gs->fgcolor = 0xFFFF;
 	gs->bgcolor = 0x0000;
 	gfx_init(gs);
+}
+
+void gfx_fill(gfx_surface_t* gs, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
+	while (y0 < y1) {
+		gs->hline(gs, x0, y0, x1);
+		y0++;
+	}
+}
+
+void gfx_clear(gfx_surface_t* gs) {
+	gfx_fill(gs, 0, 0, gs->width, gs->height);
 }
 
 void gfx_puts(gfx_surface_t *gs, uint32_t x, uint32_t y, const char* s) {
