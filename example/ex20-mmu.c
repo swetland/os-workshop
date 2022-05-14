@@ -97,7 +97,7 @@ void start(void) {
 	dump_mmu(pt1);
 
 	// enable MMU
-	csr_write(CSR_SATP, 0x80000000 | ((uintptr_t) pt1) >> 12);
+	csr_write(CSR_SATP, SATP_MODE_SV32 | ((uintptr_t) pt1) >> 12);
 	tlb_flush_all();
 	asm volatile ("nop ; nop ; nop ; nop ; nop");
 
