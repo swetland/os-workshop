@@ -3,15 +3,32 @@
 
 use core::panic::PanicInfo;
 
+
+/*
+const DRAM_BASE: usize = 0x4000000;
+const DRAM_SIZE: usize = 32 * 1024 * 1024;
+const SP: usize = DRAM_BASE + DRAM_SIZE;
+ */
+
+use core::arch::asm;
+
+use tinyos::uart;
+use core::fmt::Write;
+
 #[no_mangle]
-#[link_section = "start"]
+#[link_section = ".start"]
 pub unsafe extern "C" fn _start() -> ! {
-    let _x = 42;
+    // TODO: initialize bss to 0. The BSS segment is currently length zero so ...
+    asm!(
+	"lui sp, 0x42000",
+    );
+    start();
+}
 
-    let addr = 0xf0002800 as *mut u32;
-    *addr = 0x33;
-
-    // can't return so we go into an infinite loop here
+#[no_mangle]
+pub unsafe extern "C" fn start() -> ! {
+    let mut u = uart::Uart{};
+    u.write_str("Hello from Rust!\r\n").unwrap();
     loop {}
 }
 
