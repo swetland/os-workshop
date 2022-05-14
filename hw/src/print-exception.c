@@ -21,10 +21,10 @@ static const char* cause_name(uint32_t n) {
 		case 7: return "Store Address Fault";
 		case 8: return "User Mode ECALL";
 		case 9: return "Supervisor Mode ECALL";
-		case 10: return "Machine Mode ECALL";
+		case 11: return "Machine Mode ECALL";
 		case 12: return "Instruction Page Fault";
 		case 13: return "Load Page Fault";
-		case 14: return "Store Page Fault";
+		case 15: return "Store Page Fault";
 		}
 	}
 	return "Unknown";
