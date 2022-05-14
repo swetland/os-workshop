@@ -1,8 +1,9 @@
 [target.riscv32imac-unknown-none-elf]
-runner = "riscv64-unknown-elf-gcc"
+runner = "/usr/bin/riscv64-unknown-elf-gcc"
 rustflags = [
-  "-C", "link-arg=-T../hw/simple.ld"
+  "-C", "link-arg=-Tapp.ram.ld"
 ]
+linker = "/usr/bin/riscv64-unknown-elf-ld"
 
 [build]
-target = "riscv32imac-unknown-none-elf"
+target = "riscv32i-unknown-none-elf"
