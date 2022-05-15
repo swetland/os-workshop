@@ -12,6 +12,18 @@ ALL += $(MOD_ELF) $(MOD_LST) $(MOD_BIN)
 
 include make/rules.mk
 
+ifneq ($(MOD_EXT),)
+# if there is an extra data file, arrange for it to
+# be added as an object file containing an .extra
+# segment with the raw data.  The linker script
+# will stuff it in .rodata sandwiched between
+# __extra_start and __extra_end symbols
+$(BUILD)/$(MOD_NAME)/extra.o: $(MOD_EXT)
+	$(V)$(XOBJCOPY) -I binary -O elf32-littleriscv --rename-section .data=.extra $< $@
+
+MOD_OBJ += $(BUILD)/$(MOD_NAME)/extra.o
+endif
+
 $(MOD_ELF): $(MOD_DIR)/build.opts $(patsubst %,$(BUILD)/lib%.a,$(MOD_LIB)) 
 
 $(MOD_ELF): _OBJ := $(MOD_OBJ)
@@ -41,5 +53,6 @@ MOD_NAME :=
 MOD_INC :=
 MOD_SRC :=
 MOD_LIB :=
+MOD_EXT :=
 MOD_LDSCRIPT :=
 MOD_QEMU_FB :=
