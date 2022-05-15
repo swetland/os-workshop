@@ -15,6 +15,8 @@ fn main() {
     let dest = "src/external/vgafonts.rs";
     println!("cargo:rerun-if-changed={}", src);
     println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rustc-link-arg=-Tapp.ram.ld");
+    println!("cargo:rustc-link-arg=-melf32lriscv");
 
     let contents = fs::read_to_string(src).unwrap();
     let c1 = Regex::new(r"unsigned char ([^\[]*)\[")
