@@ -1,9 +1,4 @@
 [target.riscv32ima-unknown-none-elf]
-# runner = "/usr/bin/riscv64-unknown-elf-gcc"
-rustflags = [
-  "-C", "link-arg=-Tapp.ram.ld",
-  "-C", "link-arg=-melf32lriscv",
-]
 linker = "/usr/bin/riscv64-unknown-elf-ld"
 
 [build]
