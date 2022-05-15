@@ -45,4 +45,7 @@ SECTIONS {
 		. = ALIGN(4);
 		__bss_end = .;
 	} > RAM
+
+	/* initialize stack to top of memory */
+	__stack_top = ORIGIN(RAM) + LENGTH(RAM);
 }
