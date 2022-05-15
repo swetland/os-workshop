@@ -29,7 +29,7 @@ $(MOD_ELF): $(MOD_DIR)/build.opts $(patsubst %,$(BUILD)/lib%.a,$(MOD_LIB))
 $(MOD_ELF): _OBJ := $(MOD_OBJ)
 $(MOD_ELF): _LDFLAGS := $(MOD_LDFLAGS) -T $(MOD_LDSCRIPT)
 $(MOD_ELF): _LIB := -L$(BUILD) $(patsubst %,-l%,$(MOD_LIB)) -lgcc
-$(MOD_ELF): $(MOD_OBJ) $(MOD_LDSCRIPT) hw/common.ram.ld
+$(MOD_ELF): $(MOD_OBJ) $(MOD_LDSCRIPT) make/common.ram.ld
 	@$(info linking $@)
 	$(V)$(XGCC) $(_LDFLAGS) -o $@ $(_OBJ) $(_LIB)
 
