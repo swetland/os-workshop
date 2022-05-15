@@ -11,7 +11,7 @@ pub unsafe extern "C" fn start() -> ! {
     let left: i32 = -2500;
     let right: i32 = 1000;
     let xstep: i32 = 30;
-    let maxiter: u32 = 100;
+    let maxiter: u32 = 1000;
 
     let mut y0 = top;
     while y0 > bottom {
