@@ -15,13 +15,13 @@
 
 #define MEMORY_TOP (DRAM_BASE + DRAM_SIZE)
 
-static uint8_t* next_stack = (void*) (MEMORY_TOP - 1024*1024);
+static uint8_t* next_stack = (void*) (MEMORY_TOP - 4096);
 static uint8_t* next_heap = (void*) (DRAM_BASE + 1024*1024);
 
 void* alloc_stack(void) {
 	void* s = next_stack;
-	next_stack -= 8192;
-	memset(next_stack, 0xee, 8192);
+	next_stack -= 4096;
+	memset(next_stack, 0xee, 4096);
 	return s;
 }
 
