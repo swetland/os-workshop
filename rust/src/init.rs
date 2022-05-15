@@ -6,7 +6,7 @@ use core::panic::PanicInfo;
 #[link_section = ".start"]
 pub unsafe extern "C" fn _start() -> ! {
     // TODO: initialize bss to 0. The BSS segment is currently length zero so ...
-    asm!("li sp, 0x42000000", "j start",);
+    asm!("la sp, __stack_top", "j start",);
     loop {}
 }
 
