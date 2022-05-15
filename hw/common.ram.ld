@@ -15,6 +15,10 @@ SECTIONS {
 		__rodata_start = .;
 		*(.rodata .rodata.* .gnu.linkonce.r.*)
 		. = ALIGN(4);
+		__extra_start = .;
+		KEEP(*(.extra .extra.*))
+		. = ALIGN(4);
+		__extra_end = .;
 		__rodata_end = .;
 	} > RAM
 

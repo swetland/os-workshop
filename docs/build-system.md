@@ -16,6 +16,8 @@ Libraries must be named such that `libNAME/inc` is their include directory and t
 
 `MOD_LDSCRIPT`: alternate linker script
 
+`MOD_EXT`: specify a binary file to include.  It will be 4-byte-aligned and sandwiched between `__extra_start` and `__extra_end` symbols.
+
 `MOD_QEMU_FB`: If defined, this when `make run.NAME` is invoked to run this module under Qemu, the framebuffer will be enabled.
 
 ## Application Build Outputs
