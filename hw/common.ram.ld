@@ -28,12 +28,14 @@ SECTIONS {
 		*(.data .data.* .gnu.linkonce.d.*)
 		*(.got*)
 		*(.dynamic)
+		*(.sdata .sdata.*)
 		. = ALIGN(4);
 		__data_end = .;
 	} > RAM
 
 	.bss : {
 		__bss_start = .;
+		*(.sbss .sbss.*)
 		*(.bss .bss.*)
 		*(.gnu.linkonce.b.*)
 		. = ALIGN(4);

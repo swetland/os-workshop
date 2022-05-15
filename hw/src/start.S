@@ -13,7 +13,7 @@ _start:
 zero_loop:
 	beq t0, t1, zero_done
 	sw zero, 0(t0)
-	add a0, a0, 4
+	add t0, t0, 4
 	j zero_loop
 zero_done:
 

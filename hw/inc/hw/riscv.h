@@ -27,9 +27,11 @@
 
 #define CSR_SATP       0x180 // Supervisor Addr Translation and Protection
 
-#define SATP_ENABLE    0x80000000
+#define SATP_MODE_BARE 0x00000000U
+#define SATP_MODE_SV32 0x80000000U
 #define SATP_ASID_SHIFT 22
 #define SATP_ASID_SIZE  9
+#define SATP_ASID(n)   ((n) << SATP_ASID_SHIFT)
 
 #define CSR_MVENDORID  0xF11 // Vendor ID
 #define CSR_MARCHID    0xF12 // Architecture ID

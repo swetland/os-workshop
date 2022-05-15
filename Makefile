@@ -32,7 +32,7 @@ XOBJDUMP := $(XTOOLCHAIN)objdump
 XOBJCOPY := $(XTOOLCHAIN)objcopy
 XAR := $(XTOOLCHAIN)ar
 
-ARCHFLAGS := -march=rv32im -mabi=ilp32 -mcmodel=medany
+ARCHFLAGS := -march=rv32ima -mabi=ilp32 -mcmodel=medany
 ARCHFLAGS += -static -nostdlib -nostartfiles -ffreestanding
 ARCHFLAGS += -ffunction-sections -fdata-sections
 ARCHFLAGS += -fno-builtin -fno-strict-aliasing
