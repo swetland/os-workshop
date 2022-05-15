@@ -13,7 +13,7 @@ pub unsafe extern "C" fn start() -> ! {
 
     fb.clear();
 
-    let maxiter: usize = 100;
+    let maxiter: usize = 1000;
 
     let mut py = 0;
     while py < fb.height {
