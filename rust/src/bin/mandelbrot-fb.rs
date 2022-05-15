@@ -9,10 +9,7 @@ const COLORS: [u16; 12] = [
 ];
 #[no_mangle]
 pub unsafe extern "C" fn start() -> ! {
-    let mut fb = FB {
-        width: 640,
-        height: 480,
-    };
+    let mut fb = FB::new();
 
     fb.clear();
 
@@ -20,26 +17,31 @@ pub unsafe extern "C" fn start() -> ! {
 
     let mut py = 0;
     while py < fb.height {
-        let y0 = 1300 - (2600 * py) / fb.height;
+        let y0 = 1300 - (2600 * py as isize) / (fb.height as isize);
+        if py == 18 {
+            fb.setbg(0);
+            fb.setfg(0xffff);
+            fb.text(0, fb.height - 17, "Hello, Mandelbrot!");
+        }
         let mut px = 0;
         while px < fb.width {
-            let x0 = -2500 + (3500 * px) / fb.width;
-            let mut color: u16 = 0;
+            let x0 = -2500 + (3500 * px as isize) / (fb.width as isize);
+            fb.setfg(0);
             let mut i: usize = 0;
-            let mut x = 0;
-            let mut y = 0;
+            let mut x: isize = 0;
+            let mut y: isize = 0;
             while i < maxiter {
                 let x2 = x * x / 1000;
                 let y2 = y * y / 1000;
                 if (x2 + y2) > 4000 {
-                    color = COLORS[if i > 11 { 11 } else { i }];
+                    fb.setfg(COLORS[if i > 11 { 11 } else { i }]);
                     break;
                 }
                 y = 2 * x * y / 1000 + y0;
                 x = x2 - y2 + x0;
                 i += 1;
             }
-            fb.plot(px, py, color);
+            fb.point(px, py);
             px += 1;
         }
         py += 1;
