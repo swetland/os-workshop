@@ -40,14 +40,14 @@ $(MOD_BIN): $(MOD_ELF)
 	$(V)$(XOBJCOPY) -O binary $< $@
 
 run.$(MOD_NAME):: _BIN := $(MOD_BIN)
-run.$(MOD_NAME):: _QFLAGS := $(MOD_QFLAGS)
+run.$(MOD_NAME):: _QFLAGS := $(QFLAGS) $(MOD_QFLAGS)
 run.$(MOD_NAME):: $(MOD_ELF) $(MOD_LST) $(MOD_BIN) $(QEMUBIOS)
-	$(QEMU) $(QFLAGS) $(_QFLAGS) -kernel $(_BIN)
+	$(QEMU) $(_QFLAGS) -kernel $(_BIN)
 
 debug.$(MOD_NAME):: _BIN := $(MOD_BIN)
-run.$(MOD_NAME):: _QFLAGS := $(MOD_QFLAGS)
+debug.$(MOD_NAME):: _QFLAGS := $(QFLAGS) $(MOD_QFLAGS) $(QFLAGS.GDB)
 debug.$(MOD_NAME):: $(MOD_ELF) $(MOD_LST) $(MOD_BIN) $(QEMUBIOS)
-	$(QEMU) $(QFLAGS.GDB) $(_QFLAGS) -kernel $(_BIN)
+	$(QEMU) $(_QFLAGS) -kernel $(_BIN)
 
 MOD_NAME :=
 MOD_INC :=
