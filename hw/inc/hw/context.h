@@ -28,7 +28,7 @@ typedef struct cframe {
 
 // tframe - Trap Frame
 // contains the 16 caller-save and temporary registers
-// as well as the pc
+// as well as the pc (and maybe the sp)
 typedef struct tframe {
 	uint32_t ra;
 	uint32_t t0;
@@ -48,7 +48,7 @@ typedef struct tframe {
 	uint32_t a7;
 
 	uint32_t pc;
-	uint32_t _0;
+	uint32_t sp;
 	uint32_t _1;
 	uint32_t _2;
 } tframe_t;
