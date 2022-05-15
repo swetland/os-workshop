@@ -1,3 +1,4 @@
+use crate::external::vgafonts::vga_rom_16;
 use crate::{print, println};
 use core::ptr::write_volatile;
 
@@ -11,10 +12,6 @@ pub struct FB {
 const FB_BASE: *mut u16 = 0x40C00000 as *mut u16;
 const CH_WIDTH: usize = 8;
 const CH_HEIGHT: usize = 16;
-
-extern "C" {
-    static vga_rom_16: [u8; 4096];
-}
 
 impl FB {
     pub fn new() -> FB {
