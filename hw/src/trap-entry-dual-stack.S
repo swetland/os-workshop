@@ -73,7 +73,7 @@ trap_exit:
 	addi t0, sp, (32 * 4)
 	csrw sscratch, t0
 
-	// user sp goes into sepc for sret
+	// user pc goes into sepc for sret
 	lw t0, 0x40(sp)
 	csrw sepc, t0
 
