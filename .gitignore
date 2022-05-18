@@ -1,4 +1,5 @@
 out/
 .*.swp
 .*.swo
+.dir-locals.el
 local.mk
