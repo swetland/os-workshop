@@ -2,13 +2,15 @@
 #![no_std]
 
 use tinyos::fb::FB;
-use tinyos::{print, println};
+use tinyos::{entry_fn, print, println};
 
 const COLORS: [u16; 12] = [
     0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xBBBB, 0xCCCC,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn start() -> ! {
+
+entry_fn!(start);
+
+fn start() -> ! {
     let mut fb = FB::new();
 
     fb.clear();
