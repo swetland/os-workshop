@@ -1,5 +1,4 @@
 use crate::external::vgafonts::vga_rom_16;
-use crate::{print, println};
 
 pub struct FB {
     ptr: *mut u16,
@@ -32,9 +31,7 @@ impl FB {
             return;
         }
         unsafe {
-            self.ptr
-                .offset((self.width * y + x) as isize)
-                .write_volatile(self.fg);
+            self.ptr.add(self.width * y + x).write_volatile(self.fg);
         }
     }
 
@@ -63,7 +60,7 @@ impl FB {
             }
             for y in 0..CH_HEIGHT {
                 unsafe {
-                    let mut ptr = self.ptr.offset((self.width * y + x1) as isize);
+                    let mut ptr = self.ptr.add(self.width * y + x1);
                     let mut bits = vga_rom_16[(ch as usize * CH_WIDTH * 2 + y) as usize] as u32;
                     for _x in 0..CH_WIDTH {
                         let color = if bits & 0x80 != 0 { fg } else { bg };
