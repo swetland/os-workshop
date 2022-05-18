@@ -17,19 +17,29 @@
 
 .globl _start
 _start:
-	// stack is at top of memory
-	lw sp, stack_top
+	// zero BSS
+	la t0, __bss_start
+	la t1, __bss_end
+zero_loop:
+	beq t0, t1, zero_done
+	sw zero, 0(t0)
+	add t0, t0, 4
+	j zero_loop
+zero_done:
 
-	// adjust it from vaddr to paddr
-	li t0, (0xC0000000 - 0x40000000)
-	sub t3, sp, t0
+	// physical memory top
+	// (since it's pc relative and pc is physical right now)
+	la sp, __memory_top
 
 	// use the next to last page (before the stack) 
 	// for a bootstrap MMU page directory
 	li t4, 4096
-	sub t1, t3, t4    // t1 = end of pagetable
+	sub t1, sp, t4    // t1 = end of pagetable
 	sub t0, t1, t4    // t0 = start of pagetable
 	mv t2, t0         // t2 = pagetable
+
+	// virtual memory top / boot stack
+	lw sp, start_sp
 
 ptbl_zero_loop:
 	sw zero, 0(t0)
@@ -74,26 +84,11 @@ ptbl_map_loop:
 	nop
 	nop
 
-	// absolute jump to vaddr entrypoint
-	lw t0, _vstart_addr
+	// absolute jump to kernel start
+	lw t0, start_pc
 	jr t0
 
-_vstart:
-	// zero BSS
-	la t0, __bss_start
-	la t1, __bss_end
-zero_loop:
-	beq t0, t1, zero_done
-	sw zero, 0(t0)
-	add t0, t0, 4
-	j zero_loop
-zero_done:
-
-	// jump to kernel entrypoint
-	mv a0, sp
-	j start
-
-stack_top:
+start_sp:
 	.word __memory_top
-_vstart_addr:
-	.word _vstart
+start_pc:
+	.word start
