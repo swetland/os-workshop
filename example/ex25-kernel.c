@@ -39,28 +39,31 @@ paddr_t alloc_ppage(void) {
 
 uint32_t* pdir = 0;
 
-#define MAP_USER_RW (PTE_D|PTE_A|PTE_U|PTE_R|PTE_W|PTE_V)
-#define MAP_USER_RX (PTE_D|PTE_A|PTE_U|PTE_R|PTE_X|PTE_V)
-#define MAP_USER_RWX (PTE_D|PTE_A|PTE_U|PTE_R|PTE_W|PTE_X|PTE_V)
+#define USER_RW (PTE_D|PTE_A|PTE_U|PTE_R|PTE_W|PTE_V)
+#define USER_RX (PTE_D|PTE_A|PTE_U|PTE_R|PTE_X|PTE_V)
+#define USER_RWX (PTE_D|PTE_A|PTE_U|PTE_R|PTE_W|PTE_X|PTE_V)
+
+#define KERNEL_RO (PTE_D|PTE_A|PTE_R|PTE_V)
+#define KERNEL_RW (PTE_D|PTE_A|PTE_R|PTE_W|PTE_V)
+#define KERNEL_RX (PTE_D|PTE_A|PTE_R|PTE_X|PTE_V)
 
 int map_page(vaddr_t va, paddr_t pa, uint32_t flags) {
 	uint32_t idx1 = va >> 22;
 	uint32_t idx0 = (va >> 12) & 0x3FF;
 	uint32_t *ptbl;
 
-	xprintf("map page va=0x%08x(%d,%d) -> pa=0x%08x\n", va, idx1, idx0, pa);
-
+	//xprintf("map page va=0x%08x(%d,%d) -> pa=0x%08x (4K)\n", va, idx1, idx0, pa);
 	uint32_t pte = pdir[idx1];
 	if (pte & PTE_V) { // valid pgdir entry
 		if (pte & (PTE_X|PTE_W|PTE_R)) { 
 			return -1; // 4MB megapage already here
 		}
 		ptbl = pa_to_kva(PTE_PA(pte));
-		xprintf("old ptbl pa=0x%08x va=%p\n", PTE_PA(pte), ptbl);
+		//xprintf("old ptbl pa=0x%08x va=%p\n", PTE_PA(pte), ptbl);
 	} else { // no entry, allocate a pagetable
 		uint32_t ptbl_pa = alloc_ppage();
 		ptbl = pa_to_kva(ptbl_pa);
-		xprintf("new ptbl pa=0x%08x va=%p\n", ptbl_pa, ptbl);
+		//xprintf("new ptbl pa=0x%08x va=%p\n", ptbl_pa, ptbl);
 		pdir[idx1] = (ptbl_pa >> 2) | PTE_V;
 	}
 
@@ -73,6 +76,20 @@ int map_page(vaddr_t va, paddr_t pa, uint32_t flags) {
 
 	tlb_flush_all();
 
+	return 0;
+}
+
+int map_page_4m(vaddr_t va, paddr_t pa, uint32_t flags) {
+	uint32_t idx1 = va >> 22;
+
+	//xprintf("map page va=0x%08x(%d) -> pa=0x%08x (4M)\n", va, idx1, pa);
+	uint32_t pte = pdir[idx1];
+	if (pte & PTE_V) { // valid pgdir entry
+		return -1;
+	}
+	pdir[idx1] = ((pa & 0xFFFFF000) >> 2) | (flags & 0x3FF);
+
+	tlb_flush_all();
 	return 0;
 }
 
@@ -91,13 +108,13 @@ void start_user_program(void) {
 	xprintf("user.bin %u bytes\n", (__extra_end - __extra_start));
 
 	// allocate 16KB (4 pages) for user text/data
-	map_page(user_start + 0*PAGE_SIZE, alloc_ppage(), MAP_USER_RWX);
-	map_page(user_start + 1*PAGE_SIZE, alloc_ppage(), MAP_USER_RWX);
-	map_page(user_start + 2*PAGE_SIZE, alloc_ppage(), MAP_USER_RWX);
-	map_page(user_start + 3*PAGE_SIZE, alloc_ppage(), MAP_USER_RWX);
+	map_page(user_start + 0*PAGE_SIZE, alloc_ppage(), USER_RWX);
+	map_page(user_start + 1*PAGE_SIZE, alloc_ppage(), USER_RWX);
+	map_page(user_start + 2*PAGE_SIZE, alloc_ppage(), USER_RWX);
+	map_page(user_start + 3*PAGE_SIZE, alloc_ppage(), USER_RWX);
 
 	// allocate a 4KB (1 page) for user stack
-	map_page(user_stack - 1*PAGE_SIZE, alloc_ppage(), MAP_USER_RW);
+	map_page(user_stack - 1*PAGE_SIZE, alloc_ppage(), USER_RW);
 
 	// allow S-MODE writes to U-MODE pages
 	csr_set(CSR_SSTATUS, SSTATUS_SUM);
@@ -122,20 +139,75 @@ void start_user_program(void) {
 	// does not return
 }
 
-void start(void *memtop) {
+extern char __text_start[];
+extern char __rodata_start[];
+extern char __data_start[];
+extern char __bss_start[];
+extern char __bss_end[];
+extern char __image_end[];
+extern char __memory_top[];
+
+// On entry:
+// SP = __memory_top  (top of ram)
+// SATP points at __memory_top - 8K
+
+void start(void) {
 	xprintf("Example 25 - kernel\n\n");
+
+	xprintf("text   %p %u\n", __text_start, __rodata_start - __text_start);
+	xprintf("rodata %p %u\n", __rodata_start, __data_start - __rodata_start);
+	xprintf("data   %p %u\n", __data_start, __bss_start - __data_start);
+	xprintf("bss    %p %u\n", __bss_start, __bss_end - __bss_start);
+	xprintf("free   %p %u\n", __image_end, __memory_top - __image_end);
+	xprintf("memtop %p\n", __memory_top);
 
 	// set trap vector to trap_entry() in trap-entry-single.S
 	// it will call exception_handler() or interrupt_handler()
 	csr_write(CSR_STVEC, (uintptr_t) trap_entry);
 
-	// start allocating from 2 pages down from top of ram
-	// since our boot stack starts at top of ram
-	// and the initial page directory is just below that
-	ppage_next = kva_to_pa(memtop) - 2 * PAGE_SIZE;
-	pdir = (void*) (memtop - 2 * PAGE_SIZE);
+	// the topmost page is the boot stack
+	// the second topmost page is the boot page directory
 
-	start_user_program();	
+	// setup page allocator to start grabbing pages from the top of ram
+	ppage_next = kva_to_pa(__memory_top) - 2 * PAGE_SIZE;
+
+#if 0
+	// use the boot page table
+	pdir = (void*) __memory_top - 2 * PAGE_SIZE;
+#else
+	// build a more correct page table
+	pdir = pa_to_kva(alloc_ppage());
+
+	char *va = __text_start;
+	// map kernel text RX
+	while (va < __rodata_start) {
+		map_page((vaddr_t) va, kva_to_pa(va), KERNEL_RX);
+		va += PAGE_SIZE;
+	}
+	// map kernel rodata RO
+	while (va < __data_start) {
+		map_page((vaddr_t) va, kva_to_pa(va), KERNEL_RO);
+		va += PAGE_SIZE;
+	}
+	// map kernel data and the rest of ram RW
+	char *end = (void*) ((((uint32_t) __image_end) + 0x003FFFFF) & 0xFFC00000);
+	while (va < end) {
+		map_page((vaddr_t) va, kva_to_pa(va), KERNEL_RW);
+		va += PAGE_SIZE;
+	}
+	// map as much as possible as 4MB megapages
+	while (va < __memory_top) {
+		map_page_4m((vaddr_t) va, kva_to_pa(va), KERNEL_RW);
+		va += 4*1024*1024;
+	}
+	// map mmio region
+	map_page_4m(0xF0000000, 0xF0000000, KERNEL_RW);
+
+	csr_write(CSR_SATP, SATP_MODE_SV32 | (kva_to_pa(pdir) >> 12));
+	tlb_flush_all();
+#endif
+
+	start_user_program();
 }
 
 void interrupt_handler(void) {

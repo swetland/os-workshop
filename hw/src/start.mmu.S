@@ -94,6 +94,6 @@ zero_done:
 	j start
 
 stack_top:
-	.word __stack_top
+	.word __memory_top
 _vstart_addr:
 	.word _vstart

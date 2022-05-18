@@ -4,6 +4,7 @@ ENTRY(_start)
 SECTIONS {
 	/* RX code */
 	.text : {
+		__text_start = .;
 		KEEP(*(.start))
 		*(.text .text*)
 		*(.gnu.linkonce.t.*)
@@ -46,6 +47,9 @@ SECTIONS {
 		__bss_end = .;
 	} > RAM
 
+	. = ALIGN(4096);
+	__image_end = .;
+
 	/* initialize stack to top of memory */
-	__stack_top = ORIGIN(RAM) + LENGTH(RAM);
+	__memory_top = ORIGIN(RAM) + LENGTH(RAM);
 }

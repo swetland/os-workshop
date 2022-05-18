@@ -18,7 +18,7 @@ zero_loop:
 zero_done:
 
 	/* setup initial stack */
-	la sp, __stack_top
+	la sp, __memory_top
 
 	/* enter C code */
 	jal start
