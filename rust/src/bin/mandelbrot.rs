@@ -1,7 +1,7 @@
 #![no_main]
 #![no_std]
 
-use tinyos::{entry_fn, print, println};
+use tinyos::{entry_fn, print, println, spin};
 
 entry_fn!(start);
 
@@ -43,5 +43,5 @@ fn start() -> ! {
     println!();
 
     println!("Hello from Mandelbrot!");
-    loop {}
+    spin()
 }

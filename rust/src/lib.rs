@@ -6,6 +6,11 @@ pub mod external;
 pub mod fb;
 pub mod init;
 
+pub fn spin() -> ! {
+    #[allow(clippy::empty_loop)]
+    loop {}
+}
+
 // the following taken from https://docs.rust-embedded.org/embedonomicon/main.html
 #[macro_export]
 macro_rules! entry_fn {

@@ -11,6 +11,12 @@ const FB_BASE: *mut u16 = 0x40C00000 as *mut u16;
 const CH_WIDTH: usize = 8;
 const CH_HEIGHT: usize = 16;
 
+impl Default for FB {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FB {
     pub fn new() -> FB {
         FB {
