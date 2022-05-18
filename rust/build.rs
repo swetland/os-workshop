@@ -1,3 +1,4 @@
+use glob::glob;
 use regex::Regex;
 use std::fs;
 
@@ -15,7 +16,7 @@ fn main() {
     let dest = "src/external/vgafonts.rs";
     println!("cargo:rerun-if-changed={}", src);
     println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rustc-link-arg=-Tapp.ram.ld");
+    println!("cargo:rustc-link-arg=-Tmake/app.ram.ld");
     println!("cargo:rustc-link-arg=-melf32lriscv");
 
     let contents = fs::read_to_string(src).unwrap();
@@ -26,4 +27,14 @@ fn main() {
     let c3 = Regex::new(r"\}").unwrap().replace_all(&c2, r"]");
 
     fs::write(dest, &*c3).unwrap();
+
+    // grab linker scripts
+    fs::create_dir("make").unwrap_or(());
+    for ld in glob("../make/*.ld")
+        .expect("could not find .ld files in ../make/")
+        .flatten()
+    {
+        let dst = format!("make/{}", ld.to_str().unwrap());
+        fs::copy(ld, dst).unwrap();
+    }
 }
