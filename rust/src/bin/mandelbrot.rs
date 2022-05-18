@@ -1,10 +1,11 @@
 #![no_main]
 #![no_std]
 
-use tinyos::{print, println};
+use tinyos::{entry_fn, print, println};
 
-#[no_mangle]
-pub unsafe extern "C" fn start() -> ! {
+entry_fn!(start);
+
+fn start() -> ! {
     let top: i32 = 1000;
     let bottom: i32 = -1000;
     let ystep: i32 = 50;

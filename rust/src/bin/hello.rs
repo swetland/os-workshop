@@ -3,9 +3,9 @@
 
 use tinyos::{entry_fn, print, println};
 
-entry_fn!(main);
+entry_fn!(safe_start);
 
-fn main() -> ! {
+fn safe_start() -> ! {
     println!("Hello from Rust!");
     loop {}
 }
