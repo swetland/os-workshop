@@ -1,10 +1,11 @@
 #![no_main]
 #![no_std]
 
-use tinyos::{print, println};
+use tinyos::{entry_fn, print, println};
 
-#[no_mangle]
-pub unsafe extern "C" fn start() -> ! {
+entry_fn!(main);
+
+fn main() -> ! {
     println!("Hello from Rust!");
     loop {}
 }
