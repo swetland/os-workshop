@@ -26,6 +26,17 @@ typedef struct {
 	thread_t thread;
 } kstack_top_t;
 
+#define FRAMEBUFFER_SIZE (640*480*2)
+
+void map_framebuffer(uint32_t* pgdir) {
+	paddr_t pa = FRAMEBUFFER_BASE;
+	vaddr_t va = 0x20000000;
+	for (unsigned n = 0; n < FRAMEBUFFER_SIZE; n += PAGE_SIZE) {
+		// TODO: remove the pa from the freelist
+		vm_map_4k(pgdir, va + n, pa + n, USER_RW);
+	}
+}
+
 void start_user_program(void) {
 	vaddr_t user_start = 0x10000000;
 	vaddr_t user_stack = 0x10400000;
@@ -40,6 +51,8 @@ void start_user_program(void) {
 
 	// allocate a 4KB (1 page) for user stack
 	vm_map_4k(kpgdir, user_stack - 1*PAGE_SIZE, ppage_alloc_z(), USER_RW);
+
+	map_framebuffer(kpgdir);
 
 	// allow S-MODE writes to U-MODE pages
 	csr_set(CSR_SSTATUS, SSTATUS_SUM);
@@ -131,15 +144,17 @@ void start(void) {
 	start_user_program();
 }
 
-status_t sys_xputc(uint32_t ch) {
-	xputc(ch);
-	return XOS_OK;
+status_t sys_thread_create(handle_t* out, void *entry, void *arg) {
+	return XOS_ERR_NOT_SUPPORTED;
 }
 
-status_t sys_exit(int n) {
+void sys_xputc(unsigned ch) {
+	xputc(ch);
+}
+
+void sys_exit(int n) {
 	xprintf("\n[ user exit (status %d) ]\n", n);
 	for (;;) ;
-	return XOS_OK;
 }
 
 void interrupt_handler(void) {

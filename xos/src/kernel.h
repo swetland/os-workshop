@@ -4,6 +4,7 @@
 #pragma once
 
 #include <xos/status.h>
+#include <xos/types.h>
 
 #include <hw/riscv.h>
 #include <hw/context.h>
@@ -17,10 +18,6 @@
 void panic(const char* msg);
 
 // vm.c
-typedef uint32_t paddr_t;
-typedef uint32_t vaddr_t;
-typedef uint32_t status_t;
-
 static inline void* pa_to_kva(paddr_t pa) {
 	return (void*) (pa + (KVA_BASE - KPA_BASE));
 }
@@ -59,3 +56,6 @@ typedef struct {
 	uint32_t reserved3;
 } thread_t;
 
+// syscall entry points
+#define __SYSCALL(n,rtype,name,args) rtype sys_##name args;
+#include <xos/syscall-tmpl.h>
