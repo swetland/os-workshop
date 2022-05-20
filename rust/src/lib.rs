@@ -1,10 +1,14 @@
 #![no_std]
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
 
 #[macro_use]
 pub mod uart;
 pub mod external;
 pub mod fb;
 pub mod init;
+
+include!(concat!(env!("OUT_DIR"), "/platform_bindings.rs"));
 
 pub fn spin() -> ! {
     #[allow(clippy::empty_loop)]
