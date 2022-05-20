@@ -7,8 +7,7 @@ pub mod uart;
 pub mod external;
 pub mod fb;
 pub mod init;
-
-include!(concat!(env!("OUT_DIR"), "/platform_bindings.rs"));
+pub mod platform;
 
 pub fn spin() -> ! {
     #[allow(clippy::empty_loop)]

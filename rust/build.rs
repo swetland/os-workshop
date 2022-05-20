@@ -4,6 +4,7 @@ use std::{env, fs, path::PathBuf};
 
 fn main() {
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
+    let pwd = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
     let vga_src = "../external/vgafonts.c";
     println!("cargo:rerun-if-changed={}", vga_src);
     println!("cargo:rerun-if-changed=platform_bindings.h");
@@ -37,7 +38,7 @@ fn main() {
         .expect("Could not generate Rust bindings from platform_bindings.h");
 
     bindings
-        .write_to_file(out_dir.join("platform_bindings.rs"))
+        .write_to_file(pwd.join("src").join("platform.rs"))
         .unwrap_or_else(|_| {
             panic!(
                 "Could not write Rust bindings in directory {}",
