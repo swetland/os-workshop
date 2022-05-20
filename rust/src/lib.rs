@@ -2,6 +2,8 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 
+use cty::uint32_t;
+
 #[macro_use]
 pub mod uart;
 pub mod external;
@@ -12,6 +14,20 @@ pub mod platform;
 pub fn spin() -> ! {
     #[allow(clippy::empty_loop)]
     loop {}
+}
+
+pub fn io_rd32(addr: uint32_t) -> uint32_t {
+    let addr: *mut u32 = addr as *mut u32;
+    unsafe { addr.read_volatile() }
+}
+
+/// # Safety
+///
+/// This is dangerous. Don't write where Donny Dont does.
+///
+pub unsafe fn io_wr32(addr: uint32_t, val: uint32_t) {
+    let addr: *mut u32 = addr as *mut u32;
+    addr.write_volatile(val);
 }
 
 // the following taken from https://docs.rust-embedded.org/embedonomicon/main.html
