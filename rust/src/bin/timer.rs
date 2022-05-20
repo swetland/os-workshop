@@ -28,7 +28,7 @@ fn timer_rd(reg: TimerRegs) -> u32 {
             RELOAD => LX_TIMER_RELOAD,
         };
 
-    io_rd32(addr)
+    unsafe { io_rd32(addr) }
 }
 
 fn timer_wr(reg: TimerRegs, val: u32) {

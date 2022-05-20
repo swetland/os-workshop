@@ -16,9 +16,13 @@ pub fn spin() -> ! {
     loop {}
 }
 
-pub fn io_rd32(addr: uint32_t) -> uint32_t {
+/// # Safety
+///
+/// This is dangerous. Don't read where Donny Dont does.
+///
+pub unsafe fn io_rd32(addr: uint32_t) -> uint32_t {
     let addr: *mut u32 = addr as *mut u32;
-    unsafe { addr.read_volatile() }
+    addr.read_volatile()
 }
 
 /// # Safety
