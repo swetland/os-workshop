@@ -127,8 +127,13 @@ exception_entry:
 	la ra, trap_exit
 	j exception_handler
 
+syscall_table:
+#define __SYSCALL(n,rtype,name,args) .word sys_##name
+#include <xos/syscall-tmpl.h>
+syscall_table_end:
+
 syscall_entry:
-	li t1, 2 // SYSCALL_COUNT
+	li t1, SYSCALL_COUNT
 	bgeu t0, t1, illegal_syscall
 
 	// fn = [syscall_table + (syscall_number << 2)]
@@ -147,11 +152,6 @@ syscall_entry:
 	sw t0, 0x40(sp)
 
 	j trap_exit
-
-syscall_table:
-	.word sys_exit
-	.word sys_xputc
-syscall_table_end:
 
 illegal_syscall:
 	addi t0, zero, XOS_ERR_BAD_SYSCALL
