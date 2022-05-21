@@ -15,3 +15,9 @@ void xprintf(const char* fmt, ...) {
 	xputs(msg);
 }
 
+void vxprintf(const char* fmt, va_list ap) {
+	char msg[128];
+	vsnprintf(msg, sizeof(msg), fmt, ap);
+	xputs(msg);
+}
+

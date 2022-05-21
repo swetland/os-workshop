@@ -4,6 +4,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdarg.h>
 
 // debug-io.c -- can be replaced with alternate impls
 void xputc(unsigned c);
@@ -12,4 +13,4 @@ int  xgetc(void);
 
 // debug-printf.c -- calls xputs()
 void xprintf(const char* fmt, ...);
-
+void vxprintf(const char* fmt, va_list ap);
