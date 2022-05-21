@@ -14,7 +14,7 @@
 #include "boot.h"
 
 eframe_t *EF;
-volatile int STOP;
+volatile int STOP = 0;
 
 // we expect the supervisor program to be in memory after the end of the bootloader
 #define SVC_ENTRY (DRAM_BASE + BOOTLOADER_SIZE)
@@ -27,10 +27,15 @@ static char cmdbuf[128];
 static unsigned cmdlen = 0;
 
 void console_char(uint32_t ch) {
-	if ((ch == '\r')) {
+	if ((ch == '\r') || (ch == '\n')) {
 		xputs("\r\n");
 		cmdbuf[cmdlen] = 0;
+		// rd32safe, rd8safe modify MTVEC/MSTATUS
+		// ensure they're saved and restored here
+		uint32_t status = csr_read(CSR_MSTATUS);
 		console_line(cmdbuf);
+		csr_write(CSR_MSTATUS, status);
+		csr_write(CSR_MTVEC, ((uintptr_t) mach_exception_entry) );
 		cmdlen = 0;
 		return;
 	}
@@ -109,7 +114,7 @@ void start(uint32_t hartid, uint32_t fdt) {
 
 	uart_wr(EV_ENABLE, LX_UART_EVb_RX);
 	uart_wr(EV_PENDING, LX_UART_EVb_RX);
-	csr_set(CSR_M_INTC_ENABLE, UART0_IRQb);
+	csr_write(CSR_M_INTC_ENABLE, UART0_IRQb);
 	csr_set(CSR_MIE, INTb_MACH_EXTERN);
 
 	exit_mode_m(hartid, fdt, SVC_ENTRY, 0);
