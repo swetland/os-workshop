@@ -61,3 +61,36 @@
 #define LX_VTG_VSYNC_START   0x008
 #define LX_VTG_VSYNC_END     0x00C
 #define LX_VTG_VSCAN         0x010
+
+
+// Litex Ethernet MAC
+
+// WR is from MAC to SRAM (RX Packets)
+#define LX_ETHMAC_WR_SLOT       0x000
+#define LX_ETHMAC_WR_LEN        0x004
+#define LX_ETHMAC_WR_ERR        0x008
+#define LX_ETHMAC_WR_EV_STATUS  0x00C
+#define LX_ETHMAC_WR_EV_PENDING 0x010
+#define LX_ETHMAC_WR_EV_ENABLE  0x014
+
+// RD is from SRAM to MAC (TX Packets)
+#define LX_ETHMAC_RD_START      0x018
+#define LX_ETHMAC_RD_READY      0x01C
+#define LX_ETHMAC_RD_LEVEL      0x020
+#define LX_ETHMAC_RD_SLOT       0x024
+#define LX_ETHMAC_RD_LEN        0x028
+#define LX_ETHMAC_RD_EV_STATUS  0x02C
+#define LX_ETHMAC_RD_EV_PENDING 0x030
+#define LX_ETHMAC_RD_EV_ENABLE  0x034
+
+#define LX_ETHMAC_PRE_CRC       0x038
+#define LX_ETHMAC_RX_PRE_ERR    0x03C
+#define LX_ETHMAC_RX_CRC_ERR    0x040
+
+#define LX_ETHMAC_EVb_WR 1
+#define LX_ETHMAC_EVb_RD 1
+
+// Litex Ethernet PHY
+
+#define LX_ETHPHY_RESET      0x000
+

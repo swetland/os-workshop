@@ -9,6 +9,10 @@
 #define FRAMEBUFFER_BASE   0x40C00000 // default fb dma base
 #define DRAM_SIZE          (32*1024*1024)
 #define BOOTLOADER_SIZE    0x00008000
+#define ETHMAC_SRAM_BASE   0xE0000000
+#define ETHMAC_SLOT_SIZE   0x800
+#define ETHMAC_RX_SLOTS    2
+#define ETHMAC_TX_SLOTS    2
 #define MMIO_BASE          0xF0000000
 
 // MMIO Devices
@@ -22,14 +26,17 @@
 #define SPIFLASH_CORE_BASE 0xF0004000
 #define SPICLASH_PHY_BASE  0xF0004800
 #define SPISDCARD_BASE     0xF0005000
+#define ETHMAC_BASE        0xF0005800
 
 // Peripheral Interrupt Numbers
 #define TIMER0_IRQn 0
 #define UART0_IRQn  1
+#define ETHMAC0_IRQn 2
 
 // Peripheral Interrupt Bits
 #define TIMER0_IRQb (1U << TIMER0_IRQn)
 #define UART0_IRQb (1U << UART0_IRQn)
+#define ETHMAC0_IRQb (1U << ETHMAC_IRQn)
 
 #ifndef __ASSEMBLY__
 
