@@ -1,0 +1,15 @@
+[target.riscv32ima-unknown-none-elf]
+linker = "/usr/bin/riscv64-unknown-elf-ld"
+
+[build]
+target = "riscv32ima-unknown-none-elf.json"
+
+[unstable]
+build-std = ["core"]
+
+# -machine micro -bios ../out/boot.elf -monitor none -serial stdio -kernel
+[package.metadata.bootimage]
+run-command = ["./qemu-system-riscv32", "-monitor", "non", "-serial", "stdio", "-kernel", "{}"]
+
+[target.'cfg(target_os = "none")']
+runner = "bootimage runner"
