@@ -110,6 +110,8 @@ static inline void eth_addr_copy(uint8_t *_dst, uint8_t *_src) {
 	dst[2] = src[2];
 }
 
+void net_init(const uint8_t *mac);
+
 // push rx packets into the network stack
 void net_rx_eth(void *data, unsigned len);
 

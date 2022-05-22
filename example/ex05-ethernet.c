@@ -77,6 +77,8 @@ void start(void) {
 	// enable interrupts 
 	//irq_enable();
 
+	uint8_t mac[6] = { 0x42,0x42,0x10,0x20,0x30,0x40 };
+	net_init(mac);
 	eth_init();
 
 	while (1) {

@@ -21,9 +21,47 @@ void hexdump(void *data, int len) {
 	}
 }
 
-#define NETBUF_MAX 1536  // 1.5KB
+// create IP6 Link Local Address from Ethernet MAC
+void ip6lla_from_ethmac(ip6_addr_t* ip, const uint8_t *mac){
+	ip->w[0] = 0;
+	ip->w[1] = 0;
+	ip->b[0] = 0xFE;
+	ip->b[1] = 0x80;
+	ip->b[8] = mac[0] ^ 2;
+	ip->b[9] = mac[1];
+	ip->b[10] = mac[2];
+	ip->b[11] = 0xFF;
+	ip->b[12] = 0xFE;
+	ip->b[13] = mac[3];
+	ip->b[14] = mac[4];
+	ip->b[15] = mac[5];
+}
 
-#define TRACE_DISCARD 1
+// create IP6 Solicit Neighbor Multicast Address from Ethernet MAC
+void ip6ns_from_ethmac(ip6_addr_t *ip, const uint8_t *mac) {
+	ip->w[0] = 0;
+	ip->w[1] = 0;
+	ip->w[2] = 0;
+	ip->b[0] = 0xFF;
+	ip->b[1] = 0x02;
+	ip->b[11] = 0x01;
+	ip->b[12] = 0xFF;
+	ip->b[13] = mac[3];
+	ip->b[14] = mac[4];
+	ip->b[15] = mac[5];
+}
+
+// create Ethernet Multicast MAC from IP6 Multicast Address
+void ethmac_from_ip6mc(uint8_t *mac, const ip6_addr_t* ip) {
+	mac[0] = 0x33;
+	mac[1] = 0x33;
+	mac[2] = ip->b[12];
+	mac[3] = ip->b[13];
+	mac[4] = ip->b[14];
+	mac[5] = ip->b[15];
+}
+
+#define NETBUF_MAX 1536  // 1.5KB
 
 typedef struct netbuf {
 	struct netbuf* next;
@@ -33,29 +71,48 @@ typedef struct netbuf {
 	uint8_t data[NETBUF_MAX];
 } netbuf_t;
 
+// Interface Ethernet MAC
+static uint8_t ifc_mac[ETH_ADDR_LEN] = { 0x72, 0x72, 0xaa, 0xbb, 0xcc, 0xdd };
+
+// Interface IP6 Link Local IP6 Address
+static ip6_addr_t ifc_ll_ip6 = { .b = {
+	0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x70, 0x72, 0xaa, 0xff, 0xfe, 0xbb, 0xcc, 0xdd, } };
+
+// Multicast Neighbor Solicitation IP6 Address
+static ip6_addr_t mcast_ns_ip6 = { .b = {
+	0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x01, 0xff, 0xbb, 0xcc, 0xdd } };
+
+// Multicast Link Local All IP6 Address
+static const ip6_addr_t mcast_ll_ip6 = { .b = {
+	0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, } };
+
 // fast mac matching via word comparison
 typedef union {
 	uint32_t w[2];
 	uint8_t b[8];
 } match_t;
 
-match_t m_dev_mac = { .b = { 0, 0, 0x72, 0x72, 0xaa, 0xbb, 0xcc, 0xdd } };
-match_t m_mcast_all = { .b = { 0, 0, 0x33, 0x33, 0x00, 0x00, 0x00, 0x01 } };
-match_t m_mcast_ns = { .b = { 0, 0, 0x33, 0x33, 0xff, 0xbb, 0xcc, 0xdd } };
+// Fast Match for Interface, Link Local Multicast,
+// and Neighbor Solicitation Multicast MACs
+static match_t m_ifc_mac =      { .b = { 0, 0, 0x72, 0x72, 0xaa, 0xbb, 0xcc, 0xdd } };
+static match_t m_ns_mac =       { .b = { 0, 0, 0x33, 0x33, 0xff, 0xbb, 0xcc, 0xdd } };
+static const match_t m_ll_mac = { .b = { 0, 0, 0x33, 0x33, 0x00, 0x00, 0x00, 0x01 } };
 
-uint8_t device_mac[ETH_ADDR_LEN] = { 0x72, 0x72, 0xaa, 0xbb, 0xcc, 0xdd };
+void net_init(const uint8_t *mac) {
+	// store our interface ether mac
+	memcpy(ifc_mac, mac, ETH_ADDR_LEN);
+	memcpy(m_ifc_mac.b + 2, mac, ETH_ADDR_LEN);
 
-ip6_addr_t device_ip6 = { .b = {
-	0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x70, 0x72, 0xaa, 0xff, 0xfe, 0xbb, 0xcc, 0xdd, } };
+	// generate an ip6 link layer address from it
+	ip6lla_from_ethmac(&ifc_ll_ip6, mac);
 
-ip6_addr_t mcast_all_ip6 = { .b = {
-	0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, } };
-
-ip6_addr_t mcast_ns_ip6 = { .b = {
-	0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x01, 0xff, 0xbb, 0xcc, 0xdd } };
+	// generate ip6 NDP addresses from our ether mac
+	ip6ns_from_ethmac(&mcast_ns_ip6, mac);
+	ethmac_from_ip6mc(m_ns_mac.b + 2, &mcast_ns_ip6);
+}
 
 // returns 16bit checksum of provided byte data buffer
 static uint32_t checksum(const void* _data, unsigned len, uint32_t sum) {
@@ -115,7 +172,7 @@ void net_rx_icmp6(void *data, unsigned dlen, int mcast) {
 		if ((dlen < sizeof(ndp_hdr_t)) || (ndp->code != 0)) {
 			return;
 		}
-		if (memcmp(&ndp->target, &device_ip6, sizeof(ip6_addr_t))) {
+		if (memcmp(&ndp->target, &ifc_ll_ip6, sizeof(ip6_addr_t))) {
 			return; // not for us
 		}
 
@@ -130,8 +187,8 @@ void net_rx_icmp6(void *data, unsigned dlen, int mcast) {
 			.opt[0] = NDP_N_TGT_LL_ADDR,
 			.opt[1] = 1,
 		};
-		memcpy(&reply.hdr.target, &device_ip6, sizeof(ip6_addr_t));
-		memcpy(&reply.opt[2], device_mac, ETH_ADDR_LEN);
+		memcpy(&reply.hdr.target, &ifc_ll_ip6, sizeof(ip6_addr_t));
+		memcpy(&reply.opt[2], ifc_mac, ETH_ADDR_LEN);
 
 		net_tx_ip6_reply(data, &reply, sizeof(reply), IP_HDR_ICMP, offsetof(ndp_hdr_t, checksum));
 		return;
@@ -156,13 +213,13 @@ void net_rx_ip6(void *data, unsigned len, int mcast) {
 	ip6_hdr_t *ip6 = data;
 
 	if (mcast) {
-		if (memcmp(&ip6->dst, &mcast_all_ip6, sizeof(ip6_addr_t)) &&
+		if (memcmp(&ip6->dst, &mcast_ll_ip6, sizeof(ip6_addr_t)) &&
 			memcmp(&ip6->dst, &mcast_ns_ip6, sizeof(ip6_addr_t))) {
 			xprintf("IP6: MA ?\n");
 			return;
 		}
 	} else {
-		if (memcmp(&ip6->dst, &device_ip6, sizeof(ip6_addr_t))) {
+		if (memcmp(&ip6->dst, &ifc_ll_ip6, sizeof(ip6_addr_t))) {
 			xprintf("IP6: UA ?\n");
 			return;
 		}
@@ -197,11 +254,11 @@ void net_rx_eth(void *data, unsigned len) {
 
 	// accept packets which match our ethernet MAC or multicast address
 	uint32_t *w = data;
-	if ((w[0] == m_dev_mac.w[0]) && (w[1] == m_dev_mac.w[1])) {
+	if ((w[0] == m_ifc_mac.w[0]) && (w[1] == m_ifc_mac.w[1])) {
 		net_rx_ip6(data + sizeof(eth_hdr_t), len - sizeof(eth_hdr_t), 0);	
-	} else if ((w[0] == m_mcast_ns.w[0]) && (w[1] == m_mcast_ns.w[1])) {
+	} else if ((w[0] == m_ns_mac.w[0]) && (w[1] == m_ns_mac.w[1])) {
 		net_rx_ip6(data + sizeof(eth_hdr_t), len - sizeof(eth_hdr_t), 1);
-	} else if ((w[0] == m_mcast_all.w[0]) && (w[1] == m_mcast_all.w[1])) {
+	} else if ((w[0] == m_ll_mac.w[0]) && (w[1] == m_ll_mac.w[1])) {
 		net_rx_ip6(data + sizeof(eth_hdr_t), len - sizeof(eth_hdr_t), 1);
 	} else {
 		xprintf("ETH ? %02x %02x %02x %02x %02x %02x\n",
@@ -231,14 +288,14 @@ void net_tx_udp_reply(void *replyto, void *data, unsigned len, unsigned port) {
 	}
 
 	eth_addr_copy(tx->eth.dst, rx->eth.src);
-	eth_addr_copy(tx->eth.src, device_mac);
+	eth_addr_copy(tx->eth.src, ifc_mac);
 	tx->eth.type = htons(ETH_TYPE_IP6);
 
 	tx->ip6.bits = 0x00000060; // ver=0, tc=0, flow=0
 	tx->ip6.length = htons(UDP_HDR_LEN + len);
 	tx->ip6.next_header = IP_HDR_UDP;
 	tx->ip6.hop_limit = 255;
-	ip6_addr_copy(&tx->ip6.src, &device_ip6);
+	ip6_addr_copy(&tx->ip6.src, &ifc_ll_ip6);
 	ip6_addr_copy(&tx->ip6.dst, &rx->ip6.src);
 
 	tx->udp.src_port = htons(port);
@@ -273,14 +330,14 @@ void net_tx_ip6_reply(void *replyto, void *data, unsigned len,
 	}
 
 	eth_addr_copy(tx->eth.dst, rx->eth.src);
-	eth_addr_copy(tx->eth.src, device_mac);
+	eth_addr_copy(tx->eth.src, ifc_mac);
 	tx->eth.type = htons(ETH_TYPE_IP6);
 
 	tx->ip6.bits = 0x00000060; // ver=0, tc=0, flow=0
 	tx->ip6.length = htons(len);
 	tx->ip6.next_header = type;
 	tx->ip6.hop_limit = 255;
-	ip6_addr_copy(&tx->ip6.src, &device_ip6);
+	ip6_addr_copy(&tx->ip6.src, &ifc_ll_ip6);
 	ip6_addr_copy(&tx->ip6.dst, &rx->ip6.src);
 
 	memcpy(tx->data, data, len); 
