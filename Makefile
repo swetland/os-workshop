@@ -44,7 +44,7 @@ BUILD := out
 CFLAGS := -g -Wall -Ihw/inc
 CFLAGS += -O2
 
-ALL :=
+ALL := out/netboot
 
 LIBC_SRC := libc/src/printf.c $(wildcard libc/src/string/*.c)
 
@@ -55,3 +55,7 @@ build-all: $(ALL)
 
 clean::
 	rm -rf $(BUILD)
+
+out/netboot: tools/netboot.c tools/netboot.h
+	$(CC) -Wall -O2 -g -o out/netboot tools/netboot.c
+
