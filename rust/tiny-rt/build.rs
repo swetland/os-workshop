@@ -53,7 +53,7 @@ fn main() {
         env::set_var(cc_key, cc_val);
     }
     cc::Build::new()
-        .file("../../hw/src/start.mmu.S")
+        .file("../../hw/src/start.S")
         .include("../../hw/inc")
         .compile("start");
 
