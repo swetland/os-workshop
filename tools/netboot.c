@@ -123,7 +123,7 @@ int open_node(int idx, const char *nodename) {
 				}
 				char _tmp[128];
 				const char *tmp = inet_ntop(AF_INET6, &rxaddr.sin6_addr, _tmp, sizeof(_tmp));
-				fprintf(stderr, "[ located '%s' at %s/%u ]\n", nodename,
+				fprintf(stderr, "\n[ located '%s' at %s/%u ]\n", nodename,
 					tmp ? tmp : "unknown", rxaddr.sin6_scope_id);
 
 				int s0 = open_udp6_socket(&rxaddr, 1);
@@ -140,6 +140,7 @@ int open_node(int idx, const char *nodename) {
 int send_msg(int s, netboot_msg_t *msg, unsigned len) {
 	int r;
 	for (int retry = 0; retry < 5; retry++) {
+		msg->seq = ++seq;
 		if ((r = write(s, msg, len)) != len) {
 			return -1;
 		}
@@ -155,6 +156,10 @@ int send_msg(int s, netboot_msg_t *msg, unsigned len) {
 		r = read(s, &rsp, sizeof(rsp));
 		if ((r < NB_MSG_MIN) || (rsp.magic != NB_MAGIC) || (rsp.cmd != NB_CMD_STATUS)) {
 			fprintf(stderr, "X");
+			continue;
+		}
+		if (rsp.seq != seq) {
+			fprintf(stderr, "S");
 			continue;
 		}
 		if (rsp.arg != NB_OK) {
@@ -179,7 +184,7 @@ int send_file(int s, const char* fn, uint32_t addr) {
 		fprintf(stderr, "error: cannot open '%s'\n", fn);
 		return -1;
 	}
-	fprintf(stderr, "[ sending '%s' to 0x%08x ]\n", fn, addr);
+	fprintf(stderr, "\n[ sending '%s' to 0x%08x ]\n", fn, addr);
 	for (;;) {
 		if ((r = read(fd, msg.db, NB_DATA_MAX)) <= 0) {
 			close(fd);
@@ -223,6 +228,7 @@ void usage(void) {
 int main(int argc, char **argv) {
 	int s, idx;
 
+	int do_exit = 0;
 	const char *ifname = "qemu0";
 	const char *nodename = "device";
 	image_t imagelist[IMGMAX];
@@ -248,6 +254,8 @@ int main(int argc, char **argv) {
 		} else if (!strcmp("-h", argv[1])) {
 			usage();
 			return 0;
+		} else if (!strcmp("-x", argv[1])) {
+			do_exit = 1;
 		} else {
 			fprintf(stderr, "error: unknown argument '%s'\n", argv[1]);
 			return -1;
@@ -291,6 +299,9 @@ again:
 		msg.arg = imagelist[0].addr;
 		send_msg(s, &msg, NB_MSG_MIN);
 		fprintf(stderr, "\n");
+		close(s);
+
+		if (do_exit) break;
 	}
 
 	return 0;
