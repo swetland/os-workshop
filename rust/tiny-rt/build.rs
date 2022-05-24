@@ -5,7 +5,7 @@ use std::{env, fs, path::PathBuf};
 fn main() {
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
     let pwd = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
-    let vga_src = "../external/vgafonts.c";
+    let vga_src = "../../external/vgafonts.c";
     println!("cargo:rerun-if-changed={}", vga_src);
     println!("cargo:rerun-if-changed=platform_bindings.h");
     println!("cargo:rerun-if-changed=build.rs");
@@ -30,7 +30,7 @@ fn main() {
         .header("platform_bindings.h")
         .rust_target(bindgen::RustTarget::Nightly)
         .rustfmt_bindings(true)
-        .clang_arg("-I../hw/inc")
+        .clang_arg("-I../../hw/inc")
         .clang_arg("--target=riscv32-unknown-none-elf")
         .ctypes_prefix("cty")
         .use_core()
@@ -53,17 +53,18 @@ fn main() {
         env::set_var(cc_key, cc_val);
     }
     cc::Build::new()
-        .file("../hw/src/start.S")
-        .includes(["../hw/inc", "../libc/inc"])
+        .file("../../hw/src/start.mmu.S")
+        .include("../../hw/inc")
         .compile("start");
 
     // grab linker scripts
-    fs::create_dir("make").unwrap_or(());
-    for ld in glob("../make/*.ld")
-        .expect("could not find .ld files in ../make/")
+    let ld_script_dir = out_dir.join("make");
+    fs::create_dir_all(&ld_script_dir).unwrap();
+    for ld in glob("../../make/*.ld")
+        .expect("could not find .ld files in ../../make/")
         .flatten()
     {
-        let dst = format!("make/{}", ld.display());
+        let dst = &ld_script_dir.join(ld.file_name().unwrap());
         fs::copy(ld, dst).unwrap();
     }
 }

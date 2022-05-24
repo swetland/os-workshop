@@ -1,11 +1,11 @@
 #![no_std]
 #![no_main]
 
-use tinyos::platform::{
+use tiny_rt::platform::{
     CSR_S_INTC_ENABLE, LX_TIMER_EN, LX_TIMER_EV_ENABLE, LX_TIMER_EV_PENDING, LX_TIMER_LOAD,
     LX_TIMER_RELOAD, TIMER0_BASE,
 };
-use tinyos::{entry_fn, io_rd32, io_wr32, spin};
+use tiny_rt::{entry_fn, io_rd32, io_wr32, spin};
 
 #[allow(non_camel_case_types)]
 #[allow(clippy::upper_case_acronyms)]
