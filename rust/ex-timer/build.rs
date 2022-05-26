@@ -17,7 +17,7 @@ fn main() {
     }
     cc::Build::new()
         .files(["../../hw/src/trap-entry-single-stack.S"])
-        .compile("start");
+        .compile("traps");
 
     // grab linker scripts
     let ld_script_dir = out_dir.join("make");

@@ -1,11 +1,13 @@
 #![no_std]
 #![no_main]
 
+use core::arch::asm;
+
 use tiny_rt::platform::{
-    CSR_S_INTC_ENABLE, LX_TIMER_EN, LX_TIMER_EV_ENABLE, LX_TIMER_EV_PENDING, LX_TIMER_LOAD,
-    LX_TIMER_RELOAD, TIMER0_BASE,
+    CSR_SIE, LX_TIMER_EN, LX_TIMER_EV_ENABLE, LX_TIMER_EV_PENDING, LX_TIMER_LOAD, LX_TIMER_RELOAD,
+    TIMER0_BASE,
 };
-use tiny_rt::{entry_fn, io_rd32, io_wr32, spin};
+use tiny_rt::{entry_fn, intrinsics::csr_read, io_rd32, io_wr32, print, println, spin};
 
 #[allow(non_camel_case_types)]
 #[allow(clippy::upper_case_acronyms)]
@@ -49,6 +51,8 @@ fn timer_wr(reg: TimerRegs, val: u32) {
 
 entry_fn!(start);
 fn start() -> ! {
+    let _x = csr_read(CSR_SIE);
+    print!("x: {}", char::from_digit(_x, 16).unwrap());
     spin()
 }
 
