@@ -10,6 +10,7 @@ pub mod external;
 pub mod fb;
 pub mod init;
 pub mod platform;
+pub mod intrinsics;
 
 pub fn spin() -> ! {
     #[allow(clippy::empty_loop)]

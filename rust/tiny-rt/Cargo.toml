@@ -14,3 +14,4 @@ bindgen = "0.59"
 
 [dependencies]
 cty = "0.2"
+tiny-rt-macros = {path = "../tiny-rt-macros"}
