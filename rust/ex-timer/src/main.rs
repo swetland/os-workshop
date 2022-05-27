@@ -1,3 +1,4 @@
+#![feature(asm_const)]
 #![no_std]
 #![no_main]
 
@@ -51,8 +52,8 @@ fn timer_wr(reg: TimerRegs, val: u32) {
 
 entry_fn!(start);
 fn start() -> ! {
-    let _x = csr_read(CSR_SIE);
-    print!("x: {}", char::from_digit(_x, 16).unwrap());
+    let x = csr_read!(CSR_SIE);
+    print!("\n\nx: {}\n\n", char::from_digit(x, 10).unwrap());
     spin()
 }
 
