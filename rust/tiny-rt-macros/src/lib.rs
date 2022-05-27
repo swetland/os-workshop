@@ -1,25 +1,19 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
 
-use proc_macro2::TokenStream as TS2;
-
 use quote::format_ident;
 use quote::quote;
-use syn::{parse_macro_input, Ident};
 
 #[proc_macro]
-pub fn csr_read_macro(tokens: TokenStream) -> TokenStream {
-    let template = tokens.to_string();
+pub fn csr_read(tokens: TokenStream) -> TokenStream {
+    let register = format_ident!("{}", tokens.to_string());
     let stream = quote!({
-        fn __rdfn() -> u32 {
-            let mut x: u32 = 0;
-            unsafe {
-                asm!(#template, out(reg) x);
-            }
-            x
+        let mut x: u32 = core::u32::MAX;
+        unsafe {
+            asm!("csrr {0}, {register}", out(reg) x, register = const #register);
         }
-
-        __rdfn()
+        x
     });
+
     TokenStream::from(stream)
 }
