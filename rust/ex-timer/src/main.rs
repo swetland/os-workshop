@@ -60,8 +60,7 @@ static mut TICKS: u32 = 0;
 
 entry_fn!(start);
 fn start() -> ! {
-    let t_e = trap_entry as *mut ();
-    csr_write!(CSR_STVEC, t_e);
+    csr_write!(CSR_STVEC, trap_entry as *mut ());
 
     // enable timer0 irq
     csr_set!(CSR_S_INTC_ENABLE, TIMER0_IRQb);

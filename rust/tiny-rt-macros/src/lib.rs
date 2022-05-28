@@ -1,8 +1,23 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
 
-use quote::format_ident;
-use quote::quote;
+use quote::{format_ident, quote};
+use syn::{parse::Parse, parse_macro_input, Expr, Ident, Token};
+
+#[derive(Debug)]
+struct CsrArgs {
+    register: Ident,
+    value: Expr,
+}
+
+impl Parse for CsrArgs {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let register: Ident = input.parse()?;
+        input.parse::<Token![,]>()?;
+        let value: Expr = input.parse()?;
+        Ok(CsrArgs { register, value })
+    }
+}
 
 #[proc_macro]
 pub fn csr_read(tokens: TokenStream) -> TokenStream {
@@ -20,13 +35,9 @@ pub fn csr_read(tokens: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn csr_write(tokens: TokenStream) -> TokenStream {
-    let args: Vec<_> = tokens
-        .to_string()
-        .split(',')
-        .map(|s| s.trim().to_owned())
-        .collect();
-    let register = format_ident!("{}", args[0]);
-    let val = format_ident!("{}", args[1]);
+    let args = parse_macro_input!(tokens as CsrArgs);
+    let register = args.register;
+    let val = args.value;
     let stream = quote!({
         unsafe {
             asm!("csrw {register}, {val}", register = const #register, val = in(reg) #val);
@@ -38,13 +49,10 @@ pub fn csr_write(tokens: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn csr_set(tokens: TokenStream) -> TokenStream {
-    let args: Vec<_> = tokens
-        .to_string()
-        .split(',')
-        .map(|s| s.trim().to_owned())
-        .collect();
-    let register = format_ident!("{}", args[0]);
-    let val = format_ident!("{}", args[1]);
+    let args = parse_macro_input!(tokens as CsrArgs);
+    let register = args.register;
+    let val = args.value;
+
     let stream = quote!({
         unsafe {
             asm!("csrs {register}, {val}", register = const #register, val = in(reg) #val);

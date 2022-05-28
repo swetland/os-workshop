@@ -6,6 +6,6 @@ use crate::platform::SSTATUS_SIE;
 #[inline(always)]
 pub fn irq_enable() {
     unsafe {
-        asm!("csrrs x0, sstatus, {sie}", sie = const SSTATUS_SIE);
+        asm!("csrs sstatus, {sie}", sie = const SSTATUS_SIE);
     }
 }
