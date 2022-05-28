@@ -2,7 +2,10 @@
 #![no_std]
 #![no_main]
 
-use core::arch::asm;
+use core::{
+    arch::asm,
+    sync::atomic::{AtomicU32, Ordering},
+};
 
 use tiny_rt::{
     entry_fn,
@@ -26,40 +29,34 @@ enum TimerRegs {
     EV_ENABLE,
 }
 
-fn timer_rd(reg: TimerRegs) -> u32 {
-    use TimerRegs::*;
-    let addr = TIMER0_BASE
-        + match reg {
-            EN => LX_TIMER_EN,
-            EV_PENDING => LX_TIMER_EV_PENDING,
-            EV_ENABLE => LX_TIMER_EV_ENABLE,
-            LOAD => LX_TIMER_LOAD,
-            RELOAD => LX_TIMER_RELOAD,
-        };
-
-    unsafe { io_rd32(addr) }
-}
-
-fn timer_wr(reg: TimerRegs, val: u32) {
-    use TimerRegs::*;
-    let addr = TIMER0_BASE
-        + match reg {
-            EN => LX_TIMER_EN,
-            EV_PENDING => LX_TIMER_EV_PENDING,
-            EV_ENABLE => LX_TIMER_EV_ENABLE,
-            LOAD => LX_TIMER_LOAD,
-            RELOAD => LX_TIMER_RELOAD,
-        };
-
-    unsafe {
-        io_wr32(addr, val);
+impl TimerRegs {
+    pub fn addr(self) -> u32 {
+        TIMER0_BASE
+            + match self {
+                Self::EN => LX_TIMER_EN,
+                Self::EV_PENDING => LX_TIMER_EV_PENDING,
+                Self::EV_ENABLE => LX_TIMER_EV_ENABLE,
+                Self::LOAD => LX_TIMER_LOAD,
+                Self::RELOAD => LX_TIMER_RELOAD,
+            }
     }
 }
 
-static mut TICKS: u32 = 0;
+fn timer_rd(reg: TimerRegs) -> u32 {
+    unsafe { io_rd32(reg.addr()) }
+}
+
+fn timer_wr(reg: TimerRegs, val: u32) {
+    unsafe {
+        io_wr32(reg.addr(), val);
+    }
+}
+
+static TICKS: AtomicU32 = AtomicU32::new(0);
 
 entry_fn!(start);
 fn start() -> ! {
+    // set the stvec register to the address of the trap entry defined in trap-entry-single-stack.S
     csr_write!(CSR_STVEC, trap_entry as *mut ());
 
     // enable timer0 irq
@@ -74,9 +71,9 @@ fn start() -> ! {
     timer_init();
 
     loop {
-        let now = unsafe { core::ptr::read_volatile(&TICKS) };
+        let now = TICKS.load(Ordering::SeqCst);
         print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
-        while now == unsafe { core::ptr::read_volatile(&TICKS) } {}
+        while now == TICKS.load(Ordering::SeqCst) {}
     }
 }
 
@@ -101,10 +98,7 @@ extern "C" fn interrupt_handler() {
     use TimerRegs::*;
     if timer_rd(EV_PENDING) != 0 {
         timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
-        unsafe {
-            let t = core::ptr::read_volatile(&TICKS);
-            core::ptr::write_volatile(&mut TICKS, t + 1);
-        }
+        TICKS.fetch_add(1, Ordering::SeqCst);
     }
 }
 
