@@ -23,8 +23,7 @@ void start(void) {
 
 	gfx_surface_t gs;
 	gfx_init_display(&gs);
-
-	memset((void*) gs.pixels, 0, gs.width * gs.height * 2);
+	gfx_clear(&gs, C_BLUE);
 
 	gfx_puts(&gs, 0, gs.height - 17, "Hello, Mandelbrot!");
 
