@@ -4,11 +4,19 @@
 
 use core::arch::asm;
 
-use tiny_rt::platform::{
-    CSR_SIE, LX_TIMER_EN, LX_TIMER_EV_ENABLE, LX_TIMER_EV_PENDING, LX_TIMER_LOAD, LX_TIMER_RELOAD,
-    TIMER0_BASE,
+use tiny_rt::{
+    entry_fn,
+    intrinsics::{csr_set, csr_write, irq_enable},
+    io_rd32, io_wr32,
+    platform::{
+        eframe, trap_entry, INTb_SVC_EXTERN, LX_TIMER_EVb_ZERO, TIMER0_IRQb, CSR_SIE, CSR_STVEC,
+        CSR_S_INTC_ENABLE, LX_TIMER_EN, LX_TIMER_EV_ENABLE, LX_TIMER_EV_PENDING, LX_TIMER_LOAD,
+        LX_TIMER_RELOAD, TIMER0_BASE,
+    },
+    print, spin,
 };
-use tiny_rt::{entry_fn, intrinsics::csr_read, io_rd32, io_wr32, print, println, spin};
+
+static mut TICKS: u32 = 0;
 
 #[allow(non_camel_case_types)]
 #[allow(clippy::upper_case_acronyms)]
@@ -52,8 +60,58 @@ fn timer_wr(reg: TimerRegs, val: u32) {
 
 entry_fn!(start);
 fn start() -> ! {
-    let x = csr_read!(CSR_SIE);
-    print!("\n\nx: {}\n\n", char::from_digit(x, 10).unwrap());
+    let t_e = trap_entry as *mut ();
+    csr_write!(CSR_STVEC, t_e);
+
+    // enable timer0 irq
+    csr_set!(CSR_S_INTC_ENABLE, TIMER0_IRQb);
+
+    // enable external interrupts
+    csr_set!(CSR_SIE, INTb_SVC_EXTERN);
+
+    // enable interrupts
+    irq_enable();
+
+    timer_init();
+
+    loop {
+        let now = unsafe { TICKS };
+        // xprintf("%02u:%02u.%1u\r", now/600, (now/10) % 60, now % 10);
+        print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
+        while now == unsafe { TICKS } {}
+    }
+}
+
+fn timer_init() {
+    use TimerRegs::*;
+
+    // disable, clear pending irqs
+    timer_wr(EN, 0);
+    timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
+
+    // set for repeating every 100ms
+    timer_wr(LOAD, 0);
+    timer_wr(RELOAD, 50000000 / 10);
+
+    // enable timer and timer wrap irq
+    timer_wr(EN, 1);
+    timer_wr(EV_ENABLE, LX_TIMER_EVb_ZERO);
+}
+
+#[no_mangle]
+extern "C" fn interrupt_handler() {
+    use TimerRegs::*;
+    if timer_rd(EV_PENDING) != 0 {
+        timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
+        unsafe {
+            TICKS += 1;
+        }
+    }
+}
+
+#[no_mangle]
+extern "C" fn exception_handler(_ef: *mut eframe) {
+    print!("\n\noh shit an exception\n\n");
     spin()
 }
 
@@ -68,32 +126,6 @@ fn start() -> ! {
 
 #include <hw/platform.h>
 #include <hw/litex.h>
-
-#define timer_rd(a) io_rd32(TIMER0_BASE + LX_TIMER_ ## a)
-#define timer_wr(a,v) io_wr32(TIMER0_BASE + LX_TIMER_ ## a, v)
-
-void timer_init(void) {
-    // disable, clear pending irqs
-    timer_wr(EN, 0);
-    timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
-
-    // set for repeating every 100ms
-    timer_wr(LOAD, 0);
-    timer_wr(RELOAD, 50000000/10);
-
-    // enable timer and timer wrap irq
-    timer_wr(EN, 1);
-    timer_wr(EV_ENABLE, LX_TIMER_EVb_ZERO);
-}
-
-volatile uint32_t ticks = 0;
-
-void interrupt_handler(void) {
-    if (timer_rd(EV_PENDING)) {
-        timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
-        ticks++;
-    }
-}
 
 void start(void) {
     xprintf("Example 01 - Timer\n\n");

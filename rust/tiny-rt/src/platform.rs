@@ -280,3 +280,832 @@ fn bindgen_test_layout_max_align_t() {
     );
 }
 pub type irqstate_t = u32;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct cframe {
+    pub pc: u32,
+    pub sp: u32,
+    pub gp: u32,
+    pub tp: u32,
+    pub s0: u32,
+    pub s1: u32,
+    pub s2: u32,
+    pub s3: u32,
+    pub s4: u32,
+    pub s5: u32,
+    pub s6: u32,
+    pub s7: u32,
+    pub s8: u32,
+    pub s9: u32,
+    pub s10: u32,
+    pub s11: u32,
+}
+#[test]
+fn bindgen_test_layout_cframe() {
+    assert_eq!(
+        ::core::mem::size_of::<cframe>(),
+        64usize,
+        concat!("Size of: ", stringify!(cframe))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<cframe>(),
+        4usize,
+        concat!("Alignment of ", stringify!(cframe))
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).pc as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(pc)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).sp as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(sp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).gp as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(gp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).tp as *const _ as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(tp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s0 as *const _ as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s0)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s1 as *const _ as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s2 as *const _ as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s3 as *const _ as usize },
+        28usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s4 as *const _ as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s5 as *const _ as usize },
+        36usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s5)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s6 as *const _ as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s6)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s7 as *const _ as usize },
+        44usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s7)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s8 as *const _ as usize },
+        48usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s8)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s9 as *const _ as usize },
+        52usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s9)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s10 as *const _ as usize },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s10)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<cframe>())).s11 as *const _ as usize },
+        60usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(cframe),
+            "::",
+            stringify!(s11)
+        )
+    );
+}
+pub type cframe_t = cframe;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct tframe {
+    pub ra: u32,
+    pub t0: u32,
+    pub t1: u32,
+    pub t2: u32,
+    pub t3: u32,
+    pub t4: u32,
+    pub t5: u32,
+    pub t6: u32,
+    pub a0: u32,
+    pub a1: u32,
+    pub a2: u32,
+    pub a3: u32,
+    pub a4: u32,
+    pub a5: u32,
+    pub a6: u32,
+    pub a7: u32,
+    pub pc: u32,
+    pub sp: u32,
+    pub _1: u32,
+    pub _2: u32,
+}
+#[test]
+fn bindgen_test_layout_tframe() {
+    assert_eq!(
+        ::core::mem::size_of::<tframe>(),
+        80usize,
+        concat!("Size of: ", stringify!(tframe))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<tframe>(),
+        4usize,
+        concat!("Alignment of ", stringify!(tframe))
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).ra as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(ra)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t0 as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t0)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t1 as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t2 as *const _ as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t3 as *const _ as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t4 as *const _ as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t5 as *const _ as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t5)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).t6 as *const _ as usize },
+        28usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(t6)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a0 as *const _ as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a0)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a1 as *const _ as usize },
+        36usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a2 as *const _ as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a3 as *const _ as usize },
+        44usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a4 as *const _ as usize },
+        48usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a5 as *const _ as usize },
+        52usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a5)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a6 as *const _ as usize },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a6)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).a7 as *const _ as usize },
+        60usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(a7)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).pc as *const _ as usize },
+        64usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(pc)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>())).sp as *const _ as usize },
+        68usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(sp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>()))._1 as *const _ as usize },
+        72usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(_1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<tframe>()))._2 as *const _ as usize },
+        76usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(tframe),
+            "::",
+            stringify!(_2)
+        )
+    );
+}
+pub type tframe_t = tframe;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct eframe {
+    pub ra: u32,
+    pub t0: u32,
+    pub t1: u32,
+    pub t2: u32,
+    pub t3: u32,
+    pub t4: u32,
+    pub t5: u32,
+    pub t6: u32,
+    pub a0: u32,
+    pub a1: u32,
+    pub a2: u32,
+    pub a3: u32,
+    pub a4: u32,
+    pub a5: u32,
+    pub a6: u32,
+    pub a7: u32,
+    pub pc: u32,
+    pub sp: u32,
+    pub gp: u32,
+    pub tp: u32,
+    pub s0: u32,
+    pub s1: u32,
+    pub s2: u32,
+    pub s3: u32,
+    pub s4: u32,
+    pub s5: u32,
+    pub s6: u32,
+    pub s7: u32,
+    pub s8: u32,
+    pub s9: u32,
+    pub s10: u32,
+    pub s11: u32,
+}
+#[test]
+fn bindgen_test_layout_eframe() {
+    assert_eq!(
+        ::core::mem::size_of::<eframe>(),
+        128usize,
+        concat!("Size of: ", stringify!(eframe))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<eframe>(),
+        4usize,
+        concat!("Alignment of ", stringify!(eframe))
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).ra as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(ra)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t0 as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t0)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t1 as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t2 as *const _ as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t3 as *const _ as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t4 as *const _ as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t5 as *const _ as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t5)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).t6 as *const _ as usize },
+        28usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(t6)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a0 as *const _ as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a0)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a1 as *const _ as usize },
+        36usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a2 as *const _ as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a3 as *const _ as usize },
+        44usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a4 as *const _ as usize },
+        48usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a5 as *const _ as usize },
+        52usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a5)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a6 as *const _ as usize },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a6)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).a7 as *const _ as usize },
+        60usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(a7)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).pc as *const _ as usize },
+        64usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(pc)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).sp as *const _ as usize },
+        68usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(sp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).gp as *const _ as usize },
+        72usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(gp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).tp as *const _ as usize },
+        76usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(tp)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s0 as *const _ as usize },
+        80usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s0)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s1 as *const _ as usize },
+        84usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s1)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s2 as *const _ as usize },
+        88usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s2)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s3 as *const _ as usize },
+        92usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s3)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s4 as *const _ as usize },
+        96usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s4)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s5 as *const _ as usize },
+        100usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s5)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s6 as *const _ as usize },
+        104usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s6)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s7 as *const _ as usize },
+        108usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s7)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s8 as *const _ as usize },
+        112usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s8)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s9 as *const _ as usize },
+        116usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s9)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s10 as *const _ as usize },
+        120usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s10)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<eframe>())).s11 as *const _ as usize },
+        124usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(eframe),
+            "::",
+            stringify!(s11)
+        )
+    );
+}
+pub type eframe_t = eframe;
+extern "C" {
+    pub fn context_switch(from: *mut cframe_t, to: *mut cframe_t);
+}
+extern "C" {
+    pub fn context_entry();
+}
+extern "C" {
+    pub fn trap_entry();
+}
+extern "C" {
+    pub fn trap_exit();
+}
+extern "C" {
+    pub fn exception_exit();
+}
+extern "C" {
+    pub fn xprint_m_exception(ef: *mut eframe_t);
+}
+extern "C" {
+    pub fn xprint_s_exception(ef: *mut eframe_t);
+}
+extern "C" {
+    pub fn interrupt_handler();
+}
+extern "C" {
+    pub fn exception_handler(ef: *mut eframe_t);
+}

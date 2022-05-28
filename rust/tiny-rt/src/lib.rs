@@ -1,3 +1,4 @@
+#![feature(asm_const)]
 #![no_std]
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
@@ -12,6 +13,7 @@ pub mod init;
 pub mod intrinsics;
 pub mod platform;
 
+#[inline(always)]
 pub fn spin() -> ! {
     #[allow(clippy::empty_loop)]
     loop {}
