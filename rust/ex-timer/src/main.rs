@@ -74,12 +74,7 @@ fn start() -> ! {
 
     timer_init();
 
-    loop {
-        let now = unsafe { TICKS };
-        // xprintf("%02u:%02u.%1u\r", now/600, (now/10) % 60, now % 10);
-        print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
-        while now == unsafe { TICKS } {}
-    }
+    spin()
 }
 
 fn timer_init() {
@@ -104,62 +99,16 @@ extern "C" fn interrupt_handler() {
     if timer_rd(EV_PENDING) != 0 {
         timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
         unsafe {
+            let now = TICKS;
             TICKS += 1;
+            print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn exception_handler(_ef: *mut eframe) {
+extern "C" fn exception_handler(ef: *mut eframe) {
     print!("\n\noh shit an exception\n\n");
+    print!("{:?}", unsafe { *ef });
     spin()
 }
-
-// Copyright 2022, Brian Swetland <swetland@frotz.net>
-// Licensed under the Apache License, Version 2.0
-
-/*
-#include <hw/riscv.h>
-#include <hw/context.h>
-#include <hw/debug.h>
-#include <hw/intrinsics.h>
-
-#include <hw/platform.h>
-#include <hw/litex.h>
-
-void start(void) {
-    xprintf("Example 01 - Timer\n\n");
-
-    // set trap vector to trap_entry() in trap-entry-single.S
-    // it will call exception_handler() or interrupt_handler()
-    csr_write(CSR_STVEC, (uintptr_t) trap_entry);
-
-    // enable timer0 irq
-    csr_set(CSR_S_INTC_ENABLE, TIMER0_IRQb);
-
-    // enable external interrupts
-    csr_set(CSR_SIE, INTb_SVC_EXTERN);
-
-    // enable interrupts
-    irq_enable();
-
-    timer_init();
-
-    while (1) {
-        uint32_t now = ticks;
-        xprintf("%02u:%02u.%1u\r", now/600, (now/10) % 60, now % 10);
-
-        // wait for ticks to change
-        while (now == ticks) ;
-    }
-}
-
-// if an exception occurs, dump register state and halt
-void exception_handler(eframe_t *ef) {
-    xprintf("\n** SUPERVISOR EXCEPTION **\n");
-    xprint_s_exception(ef);
-    xprintf("\nHALT\n");
-    for (;;) ;
-}
-
-*/
