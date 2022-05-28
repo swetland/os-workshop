@@ -5,8 +5,8 @@
 
 #include <stdint.h>
 
-#define NB_PORT_QUERY  32320
-#define NB_PORT_CTRL   31310
+#define NB_PORT_QUERY  58571
+#define NB_PORT_CTRL   58572
 
 // echo -n netboot.magic | sha256sum | cut -c1-8
 // commands are similar (netboot.cmd.name)
