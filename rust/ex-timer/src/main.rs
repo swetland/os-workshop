@@ -16,8 +16,6 @@ use tiny_rt::{
     print, spin,
 };
 
-static mut TICKS: u32 = 0;
-
 #[allow(non_camel_case_types)]
 #[allow(clippy::upper_case_acronyms)]
 enum TimerRegs {
@@ -58,6 +56,8 @@ fn timer_wr(reg: TimerRegs, val: u32) {
     }
 }
 
+static mut TICKS: u32 = 0;
+
 entry_fn!(start);
 fn start() -> ! {
     let t_e = trap_entry as *mut ();
@@ -74,7 +74,11 @@ fn start() -> ! {
 
     timer_init();
 
-    spin()
+    loop {
+        let now = unsafe { core::ptr::read_volatile(&TICKS) };
+        print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
+        while now == unsafe { core::ptr::read_volatile(&TICKS) } {}
+    }
 }
 
 fn timer_init() {
@@ -99,9 +103,8 @@ extern "C" fn interrupt_handler() {
     if timer_rd(EV_PENDING) != 0 {
         timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
         unsafe {
-            let now = TICKS;
-            TICKS += 1;
-            print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
+            let t = core::ptr::read_volatile(&TICKS);
+            core::ptr::write_volatile(&mut TICKS, t + 1);
         }
     }
 }
@@ -109,6 +112,6 @@ extern "C" fn interrupt_handler() {
 #[no_mangle]
 extern "C" fn exception_handler(ef: *mut eframe) {
     print!("\n\noh shit an exception\n\n");
-    print!("{:?}", unsafe { *ef });
+    print!("\n\n{:?}\n\n", unsafe { *ef });
     spin()
 }
