@@ -7,4 +7,4 @@
 
 ### [Build System Documentation](docs/build-system.md)
 
-
+![fmuselab icesugar pro](docs/hardware.jpg)

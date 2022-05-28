@@ -8,6 +8,15 @@ IMPORTANT: Be careful not to zap the board with static electricity.
 
 IMPORTANT: Use the USB connector on the SODIMM sized module, not on the breakout board.
 
+![muselab icesugar pro fpga board](hardware.jpg)
+
+# Installing the Ethernet PMOD
+
+Consult the above image for the proper installation location.  You'll need to solder down
+the header at P6.  The FPGA bitstream is configured to support the Ethernet PMOD as installed
+aligned with the left side of this header (again, as illustrated above).  Installing it
+incorrectly could short power and ground and possibly damage the PMOD or the FPGA board.
+
 ## Install Tools
 
 You need the `sconsole` utility -- a very simple serial terminal that also knows how to download
@@ -27,6 +36,15 @@ The USB debug interface exposes a serial port (typically `/dev/ttyACM0`) and
 a USB Mass Storage Device with a FAT partition.
 
 You can copy an appropriate `fpga.bit` file to the FAT partition to update the FPGA.
+
+The latest bitstream is in this repository at `prebuilt/fpga.bit.gz` -- it needs to
+be decompressed with gzip into `fpga.bit` before installation.
+
+## Booting the FPGA from micro sdcard
+
+If a micro sdcard with a FAT filesystem is installed (in the socket in the underside
+of the FPGA board) and there is a `boot.bin` file, that file will be copied to 0x40000000
+and executed after the BIOS initializes the hardware.
 
 ## Building the FPGA bitstream from scratch
 
@@ -152,3 +170,24 @@ Hello, Mandelbrot!
 The messages in square brackets are sconsole telling you what it's done.
 The messages after the "Liftoff!" banner are from `boot.bin` and `mandelbrot-fb.bin`
 
+## Network Booting 
+
+Install the Ethernet PMOD.
+
+Ensure the FPGA board and your development computer are on the same local link -- either
+using a direct cable between their ethernet ports or both plugged into the same switch.
+
+Run the network boot binary on the FPGA board -- either by copying `out/boot.net.bin` to
+`boot.bin` on a FAT partition on a micro sdcard installed in the FPGA board, or by using
+serial boot to run it on startup, like so:
+
+```
+$ sconsole -t -b/stuff/os-workshop/out/boot.net.bin@0x40000000 /dev/ttyACM0 1000000
+```
+
+Use the netboot agent to send your app down over the network:
+```
+$ out/netboot -i enx000ec66b9271 out/mandelbrot-fb.bin@40008000
+```
+
+(use the name of your local ethernet interface as the argument to the `-i` option)
