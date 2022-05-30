@@ -56,14 +56,18 @@ static mut TICKS: u32 = 0;
 
 entry_fn!(start);
 fn start() -> ! {
-    // set the stvec register to the address of the trap entry defined in trap-entry-single-stack.S
-    csr_write!(CSR_STVEC, trap_entry as *mut ());
+    // these csr macros are not safe, as they take their arguments almost verbatim and pass them
+    // into the unsafe `core::arch::asm!()` macro
+    unsafe {
+        // set the stvec register to the address of the trap entry defined in trap-entry-single-stack.S
+        csr_write!(CSR_STVEC, trap_entry as *mut ());
 
-    // enable timer0 irq
-    csr_set!(CSR_S_INTC_ENABLE, TIMER0_IRQb);
+        // enable timer0 irq
+        csr_set!(CSR_S_INTC_ENABLE, TIMER0_IRQb);
 
-    // enable external interrupts
-    csr_set!(CSR_SIE, INTb_SVC_EXTERN);
+        // enable external interrupts
+        csr_set!(CSR_SIE, INTb_SVC_EXTERN);
+    }
 
     // enable interrupts
     irq_enable();
