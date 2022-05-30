@@ -4,7 +4,7 @@
 
 use core::{
     arch::asm,
-    sync::atomic::{AtomicU32, Ordering},
+    ptr::{read_volatile, write_volatile},
 };
 
 use tiny_rt::{
@@ -52,7 +52,7 @@ fn timer_wr(reg: TimerRegs, val: u32) {
     }
 }
 
-static TICKS: AtomicU32 = AtomicU32::new(0);
+static mut TICKS: u32 = 0;
 
 entry_fn!(start);
 fn start() -> ! {
@@ -71,9 +71,9 @@ fn start() -> ! {
     timer_init();
 
     loop {
-        let now = TICKS.load(Ordering::SeqCst);
+        let now = unsafe { read_volatile(&TICKS) };
         print!("{:0>2}:{:0>2}.{}\r", now / 600, (now / 10) % 60, now % 10);
-        while now == TICKS.load(Ordering::SeqCst) {}
+        while now == unsafe { read_volatile(&TICKS) } {}
     }
 }
 
@@ -98,7 +98,11 @@ extern "C" fn interrupt_handler() {
     use TimerRegs::*;
     if timer_rd(EV_PENDING) != 0 {
         timer_wr(EV_PENDING, LX_TIMER_EVb_ZERO);
-        TICKS.fetch_add(1, Ordering::SeqCst);
+
+        unsafe {
+            let t = read_volatile(&TICKS);
+            write_volatile(&mut TICKS, t + 1);
+        }
     }
 }
 
