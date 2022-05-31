@@ -32,6 +32,7 @@ fn main() {
         .rustfmt_bindings(true)
         .clang_arg("-I../../hw/inc")
         .clang_arg("--target=riscv32-unknown-none-elf")
+        .clang_arg("-D__ASSEMBLY__")
         .ctypes_prefix("cty")
         .use_core()
         .generate()
