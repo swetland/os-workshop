@@ -1,0 +1,17 @@
+[package]
+name = "tiny-rt"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.59.0" # for asm!
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+regex = "1"
+glob = "0.3"
+cc = "1"
+bindgen = "0.59"
+
+[dependencies]
+cty = "0.2"
+tiny-rt-macros = {path = "../tiny-rt-macros"}

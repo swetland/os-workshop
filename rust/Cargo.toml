@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+"tiny-rt",
+"tiny-rt-macros",
+"ex-timer"
+]
